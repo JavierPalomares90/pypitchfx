@@ -4,6 +4,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import gids as gds
 import argparse
+from datetime import datetime
 
 '''
 Python tool to scrape pitchf/x data from mlb's website.
@@ -13,7 +14,7 @@ Author: Javier Palomares
 
 def gids2urls(gids):
     root = "http://gd2.mlb.com/components/game/"
-    lea
+
 
 
 def makeUrls(start=None,end=None,gids=None):
@@ -28,10 +29,12 @@ def makeUrls(start=None,end=None,gids=None):
         
 def get_subset_gids(gids,first,last):
     list = []
+    first_dt = datetime.strptime(first,"%Y-%m-%d")
+    last_dt = datetime.strptime(last,"%Y-%m-%d")
     for gid in gids:
-        elements = gid.split('-')
-        # TODO get proper subset
-        if(True):
+        elements = gid.split('_')
+        gid_dt = datetime.strptime(elements[1]+"-"+elements[2]+"-"+elements[3],"%Y-%m-%d")
+        if(first_dt <= gid_dt and gid_dt <= last_dt):
             list.append(gid)
     return list
         
