@@ -45,6 +45,33 @@ def get_subset_gids(gids,first,last):
         if(first_dt <= gid_dt and gid_dt <= last_dt):
             list.append(gid)
     return list
+
+def get_innings_all(game_dir):
+    innings_all = []
+    for game in game_dir:
+        innings_all.append(game+"inning/inning_all.xml")
+    return innings_all
+
+def get_players(game_dir):
+    players = []
+    for game in game_dir:
+        players.append(game + "players.xml")
+    return players
+
+def get_innings_hit(game_dir):
+    innings_hit = []
+    for game in game_dir:
+        innings_hit.append(game + "inning/inning_hit.xml")
+    return innings_hit
+
+def get_miniscoreboard(game_dir):
+    miniscoreboard = []
+    for game in game_dir:
+        miniscoreboard.append(game + "miniscoreboard.xml")
+    return miniscoreboard
+
+def parse_innnings_all(innings_all):
+    pass
         
 
 def scrape(start,end,game_ids=None,suffix="inning/inning_all.xml",db_connection=None):
@@ -54,7 +81,11 @@ def scrape(start,end,game_ids=None,suffix="inning/inning_all.xml",db_connection=
         game_dir = makeUrls(gids=game_ids)
     for url in game_dir:
         print(url)
-    pass
+    innings_all = get_innings_all(game_dir)
+    players = get_players(game_dir)
+    innings_hit = get_innings_hit(game_dir)
+    mini_scoreboard = get_miniscoreboard(game_dir)
+    parse_innnings_all(innings_all)
     
 def get_args():
     parser = argparse.ArgumentParser(description='Scrape data')
