@@ -6,6 +6,8 @@ import gids as gds
 import argparse
 from datetime import datetime
 import requests
+from Game import Game
+from Inning import Inning
 
 '''
 Python tool to scrape pitchf/x data from mlb's website.
@@ -73,6 +75,33 @@ def get_miniscoreboard(game_dir):
 
 def parse_game(game_xml):
     game_attrs = dict(game_xml.attrs)
+    atBat = game_attrs["atBat"]
+    deck = game_attrs["deck"]
+    hole = game_attrs["hole"]
+    ind = game_attrs["ind"]
+    game = Game(atBat,deck,hole,ind)
+    return game
+
+def parse_half_inning(half):
+    #TODO: Finish impl
+    pass
+
+def add_half_innings(inning,half_innings):
+    top = half_innings[0]
+    bottom = half_innings[1]
+    top_inning = parse_half_inning(top)
+    bottom_inning = parse_bottom_inning(bottom)
+
+def parse_inning(inning):
+    innings_attr = dict(inning.attrs)
+    num = innings_attr["num"]
+    away_team = innings_attr["away_team"]
+    home_team = innings_attr["home_team"]
+    nxt = innings_attr["next"]
+    half_innings = list(inning.children)
+    i = Inning(num,away_team,home_team,nxt)
+    add_half_innings(i,half_innings)
+    return i
 
 
 def parse_innnings_all(innings_all):
@@ -82,9 +111,10 @@ def parse_innnings_all(innings_all):
         soup = BeautifulSoup(contents,'xml')
         game_xml = soup.find('game')
         game = parse_game(game_xml)
-        game_attrs = dict(game.attrs)
-        innings = soup.find_all('inning')
-        innings_attr = dict(innings.attrs)
+        innings_xml = soup.find_all('inning')
+        innings = []
+        for inni in innings_xml:
+            innings.append(parse_inning(inni))
         x = 0
     pass
         
