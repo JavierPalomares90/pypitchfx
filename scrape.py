@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 import numpy as np
 import pandas as pd
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup # required  pip3 install lxml
 import gids as gds
 import argparse
 from datetime import datetime
+import requests
 
 '''
 Python tool to scrape pitchf/x data from mlb's website.
@@ -49,28 +50,42 @@ def get_subset_gids(gids,first,last):
 def get_innings_all(game_dir):
     innings_all = []
     for game in game_dir:
-        innings_all.append(game+"inning/inning_all.xml")
+        innings_all.append(game+"/inning/inning_all.xml")
     return innings_all
 
 def get_players(game_dir):
     players = []
     for game in game_dir:
-        players.append(game + "players.xml")
+        players.append(game + "/players.xml")
     return players
 
 def get_innings_hit(game_dir):
     innings_hit = []
     for game in game_dir:
-        innings_hit.append(game + "inning/inning_hit.xml")
+        innings_hit.append(game + "/inning/inning_hit.xml")
     return innings_hit
 
 def get_miniscoreboard(game_dir):
     miniscoreboard = []
     for game in game_dir:
-        miniscoreboard.append(game + "miniscoreboard.xml")
+        miniscoreboard.append(game + "/miniscoreboard.xml")
     return miniscoreboard
 
+def parse_game(game_xml):
+    game_attrs = dict(game_xml.attrs)
+
+
 def parse_innnings_all(innings_all):
+    for url in innings_all:
+        resp = requests.get(url)
+        contents = resp.content
+        soup = BeautifulSoup(contents,'xml')
+        game_xml = soup.find('game')
+        game = parse_game(game_xml)
+        game_attrs = dict(game.attrs)
+        innings = soup.find_all('inning')
+        innings_attr = dict(innings.attrs)
+        x = 0
     pass
         
 
