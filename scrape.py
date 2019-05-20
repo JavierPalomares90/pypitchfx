@@ -13,12 +13,20 @@ Author: Javier Palomares
 '''
 
 def gids2urls(gids):
-    root = "http://gd2.mlb.com/components/game/"
+    urls = []
+    root = "http://gd2.mlb.com/components/game/mlb"
+    for gid in gids:
+       elements = gid.split('_') 
+       year = elements[1]
+       month = elements[2]
+       day = elements[3]
+       url = "{root}/year_{year}/month_{month}/day_{day}/{id}".format(root=root,year=year,month=month,day=day,id=gid)
+       urls.append(url)
+    return urls
 
 
 
 def makeUrls(start=None,end=None,gids=None):
-    root = "http://gd2.mlb.com/components/game/mlb/"
     if gids is None:
         if start is None or end is None:
             raise Exception("Need to specify start or end")
@@ -44,6 +52,8 @@ def scrape(start,end,game_ids=None,suffix="inning/inning_all.xml",db_connection=
         game_dir = makeUrls(start,end)
     else:
         game_dir = makeUrls(gids=game_ids)
+    for url in game_dir:
+        print(url)
     pass
     
 def get_args():
