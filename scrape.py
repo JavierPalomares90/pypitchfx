@@ -193,6 +193,7 @@ def parse_inning(inning):
 
 
 def parse_innnings_all(innings_all):
+    games = []
     for url in innings_all:
         resp = requests.get(url)
         contents = resp.content
@@ -203,8 +204,9 @@ def parse_innnings_all(innings_all):
         innings = []
         for inni in innings_xml:
             innings.append(parse_inning(inni))
-        x = 0
-    pass
+        game.innings = innings
+        games.append(game)
+    return games
         
 
 def scrape(start,end,game_ids=None,suffix="inning/inning_all.xml",db_connection=None):
@@ -218,7 +220,7 @@ def scrape(start,end,game_ids=None,suffix="inning/inning_all.xml",db_connection=
     players = get_players(game_dir)
     innings_hit = get_innings_hit(game_dir)
     mini_scoreboard = get_miniscoreboard(game_dir)
-    parse_innnings_all(innings_all)
+    games = parse_innnings_all(innings_all)
     
 def get_args():
     parser = argparse.ArgumentParser(description='Scrape data')
