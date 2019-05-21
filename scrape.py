@@ -83,9 +83,52 @@ def parse_game(game_xml):
     game = Game(atBat,deck,hole,ind)
     return game
 
-def parse_pitch(pitch):
-    #TODO Complete impl
-    pass
+def parse_pitch(pitch_xml):
+    pitch_attrs = dict(pitch_xml.attrs)
+    des = pitch_attrs['des']
+    id_var = pitch_attrs['var']
+    type_var = pitch_attrs['type']
+    tfs = pitch_attrs['tfs']
+    tfs_zulu = pitch_attrs['tfs_zulu']
+    x = pitch_attrs['x']
+    y = pitch_attrs['y']
+    event_num = pitch_attrs['event_num']
+    sv_id = pitch_attrs['sv_id']
+    play_guid = pitch_attrs['play_guid'] #TODO: Generate guid
+    start_speed = pitch_attrs['start_speed']
+    end_speed = pitch_attrs['end_speed']
+    sz_top = pitch_attrs['sz_top']
+    sz_bot = pitch_attrs['sz_bot']
+    pfx_x = pitch_attrs['pfx_x']
+    pfx_z = pitch_attrs['pfx_z']
+    px = pitch_attrs['px']
+    pz = pitch_attrs['pz']
+    x0 = pitch_attrs['x0']
+    y0 = pitch_attrs['y0']
+    z0 = pitch_attrs['z0']
+    vx0 = pitch_attrs['vx0']
+    vy0 = pitch_attrs['vy0']
+    vz0 = pitch_attrs['vz0']
+    ax = pitch_attrs['ax']
+    ay = pitch_attrs['ay']
+    az = pitch_attrs['az']
+    break_y = pitch_attrs['break_y']
+    break_angle = pitch_attrs['break_angle']
+    break_length = pitch_attrs['break_length']
+    pitch_type = pitch_attrs['pitch_type']
+    type_conf = pitch_attrs(type_conf)
+    zone = pitch_attrs['zone']
+    nasty = pitch_attrs['nasty']
+    spin_dir = pitch_attrs['spin_dir']
+    spin_rate = pitch_attrs['spin_rate']
+    cc = pitch_attrs['cc']
+    mt = pitch_attrs['mt']
+
+    pitch = pitch(des,id_var,type_var,tfs,tfs_zulu,x,y,event_num,sv_id,play_guid,start_speed,end_speed,
+    sz_top,sz_bot,pfx_x,pfx_z,px,pz,x0,y0,z0,vx0,vy0,vz0,ax,ay,az,break_y,break_angle,break_length,pitch_type,type_conf,
+    zone,nasty,spin_dir,spin_rate,cc,mt)
+    return pitch
+
 
 def parse_at_bat(ab):
     ab_attributes = dict(ab.attrs)
