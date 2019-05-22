@@ -2,7 +2,7 @@ class AtBat:
 
     def __init__(self, num, b, s,o, start_tfs, 
         start_tfs_zulu, batter,stand,b_height,pitcher,
-        p_throws,des,event_num,event,score,home_team_runs,away_team_runs):
+        p_throws,des,event_num,event,home_team_runs,away_team_runs,score='F'):
         self.num = num
         self.balls = b
         self.strikes = s
@@ -20,4 +20,5 @@ class AtBat:
         self.home_team_runs = home_team_runs
         self.away_team_runs = away_team_runs
         self.pitches = None
+        self.runners = None
 

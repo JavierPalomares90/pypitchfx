@@ -10,6 +10,8 @@ from Game import Game
 from Inning import Inning
 from AtBat import AtBat
 from HalfInning import HalfInning
+from Pitch import Pitch
+from Runner import Runner
 
 '''
 Python tool to scrape pitchf/x data from mlb's website.
@@ -86,7 +88,7 @@ def parse_game(game_xml):
 def parse_pitch(pitch_xml):
     pitch_attrs = dict(pitch_xml.attrs)
     des = pitch_attrs['des']
-    id_var = pitch_attrs['var']
+    id_var = pitch_attrs['id']
     type_var = pitch_attrs['type']
     tfs = pitch_attrs['tfs']
     tfs_zulu = pitch_attrs['tfs_zulu']
@@ -116,7 +118,7 @@ def parse_pitch(pitch_xml):
     break_angle = pitch_attrs['break_angle']
     break_length = pitch_attrs['break_length']
     pitch_type = pitch_attrs['pitch_type']
-    type_conf = pitch_attrs(type_conf)
+    type_conf = pitch_attrs['type_confidence'] #TODO: Why isn't there a pitch for the hit?
     zone = pitch_attrs['zone']
     nasty = pitch_attrs['nasty']
     spin_dir = pitch_attrs['spin_dir']
@@ -124,11 +126,25 @@ def parse_pitch(pitch_xml):
     cc = pitch_attrs['cc']
     mt = pitch_attrs['mt']
 
-    pitch = pitch(des,id_var,type_var,tfs,tfs_zulu,x,y,event_num,sv_id,play_guid,start_speed,end_speed,
-    sz_top,sz_bot,pfx_x,pfx_z,px,pz,x0,y0,z0,vx0,vy0,vz0,ax,ay,az,break_y,break_angle,break_length,pitch_type,type_conf,
-    zone,nasty,spin_dir,spin_rate,cc,mt)
+    pitch = Pitch(des,id_var,type_var,tfs,tfs_zulu,x,y,event_num,sv_id,
+    play_guid,start_speed,end_speed,sz_top,sz_bot,pfx_x,pfx_z,
+    px,pz,x0,y0,z0,vx0,vy0,vz0,ax,ay,az,break_y,break_angle,break_length,
+    pitch_type,type_conf,zone,nasty,spin_dir,spin_rate,cc,mt)
     return pitch
 
+def parse_runner(r):
+    runner_attributes = dict(r.attrs)
+    id_var = runner_attributes['id']
+    start = runner_attributes['start']
+    end = runner_attributes['end']
+    event = runner_attributes['event']
+    event_num = runner_attributes['event_num']
+    # score, rbi,earned are optional attributes
+    score = runner_attributes.get('score','F')
+    rbi = runner_attributes.get('rbi','F')
+    earned = runner_attributes.get('earned','F')
+    runner = Runner(id_var,start,end,event,event_num,score,rbi,earned)
+    return runner
 
 def parse_at_bat(ab):
     ab_attributes = dict(ab.attrs)
@@ -147,17 +163,27 @@ def parse_at_bat(ab):
     event_num = ab_attributes['event_num']
     event = ab_attributes['event']
     home_team_runs = ab_attributes['home_team_runs']
-    away_team_runs = ab_attributes['away_team_runs']
+    away_team_runs = ab_attributes['away_team_runs'] # Is this after the atbat?
+    score = ab_attributes.get('score','F') #TODO: This is 'T' for true? It's also optional
 
     at_bat = AtBat(num,b,s,o,start_tfs,start_tfs_zulu,batter,
-        stand,b_height,pitcher,p_throws,des,event_num,event,home_team_runs,away_team_runs)
-    # get the pitches
-    pitches_xml = list(inning.children)
+        stand,b_height,pitcher,p_throws,des,event_num,event,home_team_runs,away_team_runs,score)
+    # get the pitches and runners during the atbat
+    pitches_runners_xml = list(ab.children)
     pitches = []
-    for p in pitches_xml:
-        pitch = parse_pitch(p)
-        pitches.append(pitch)
+    runners = []
+    for x in pitches_runners_xml:
+        if x.name == 'pitch':
+            pitch = parse_pitch(x)
+            pitches.append(pitch)
+        elif x.name == 'runner':
+            runner = parse_runner(x)
+            runners.append(runner)
+        else:
+            raise('Invalid ab child' + x)
     at_bat.pitches = pitches
+    at_bat.runners = runners
+
     return at_bat
 
 

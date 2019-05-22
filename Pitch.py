@@ -1,8 +1,8 @@
 class Pitch:
 
-    def __init__(des,id_,type_,tfs,tfs_zulu,x,y,event_num,sv_id,
-    play_guid,start_speed,end_speed,sz_top,pfx_x,pfx_z,
-    px,pz,x0,y0,z0,vx0,vy0,vz0,ax,ay,az,break_y,break_angle,
+    def __init__(self,des,id_,type_,tfs,tfs_zulu,x,y,event_num,sv_id,
+    play_guid,start_speed,end_speed,sz_top,sz_bot,pfx_x,pfx_z,
+    px,pz,x0,y0,z0,vx0,vy0,vz0,ax,ay,az,break_y,break_angle,break_length,
     pitch_type,type_confidence,zone,nasty,spin_dir,spin_rate,cc,mt):
         self.des = des
         self.id = id_
@@ -17,6 +17,7 @@ class Pitch:
         self.start_speed = start_speed
         self.end_speed = end_speed
         self.sz_top = sz_top
+        self.sz_bot = sz_bot
         self.pfx_x = pfx_x
         self.pfx_z = pfx_z
         self.px = px
@@ -32,6 +33,7 @@ class Pitch:
         self.az = az
         self.break_y = break_y
         self.break_angle = break_angle
+        self.break_length = break_length
         self.pitch_type = pitch_type
         self.type_confidence = type_confidence
         self.zone = zone
