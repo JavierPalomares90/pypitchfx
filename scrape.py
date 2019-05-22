@@ -12,6 +12,7 @@ from AtBat import AtBat
 from HalfInning import HalfInning
 from Pitch import Pitch
 from Runner import Runner
+from Action import Action
 
 '''
 Python tool to scrape pitchf/x data from mlb's website.
@@ -186,15 +187,37 @@ def parse_at_bat(ab):
 
     return at_bat
 
+def parse_action(x):
+    action_attributes = dict(x.attrs)
+    b = action_attributes['b']
+    s = action_attributes['s']
+    o = action_attributes['o']
+    des = action_attributes['des']
+    event= action_attributes['event']
+    tfs = action_attributes['tfs']
+    tfs_zulu = action_attributes['tfs_zulu']
+    player = action_attributes['player']
+    pitch = action_attributes['pitch']
+    event_num = action_attributes['event_num']
+    home_team_runs = action_attributes['home_team_runs']
+    away_team_runs = action_attributes['away_team_runs']
+    action = Action(b,s,o,des,event,tfs,tfs_zulu,player,pitch,event_num,home_team_runs,away_team_runs)
+    return action
 
 def parse_half_inning(half):
-    ab_xml = list(half.children)
-    at_bats = []
-    for ab in ab_xml:
-        at_bat = parse_at_bat(ab)
-        at_bats.append(at_bat)
+    abs_and_actions_xml = list(half.children)
+    at_bats_and_actions = []
+    for x in abs_and_actions_xml:
+        if x.name == 'atbat':
+            at_bat = parse_at_bat(x)
+            at_bats_and_actions.append(at_bat)
+        elif x.name =='action':
+            action = parse_action(x)
+            at_bats_and_actions.append(action)
+        else:
+            raise('Invalid xml child' + x)
     h = HalfInning()
-    h.at_bats = at_bats
+    h.at_bats_and_actions = at_bats_and_actions
     return h
 
 def add_half_innings(inning,half_innings):
