@@ -13,6 +13,7 @@ from HalfInning import HalfInning
 from Pitch import Pitch
 from Runner import Runner
 from Action import Action
+from Pickoff import Pickoff
 
 '''
 Python tool to scrape pitchf/x data from mlb's website.
@@ -147,6 +148,13 @@ def parse_runner(r):
     runner = Runner(id_var,start,end,event,event_num,score,rbi,earned)
     return runner
 
+def parse_pickoff(po):
+    po_attributes = dict(po.attrs)
+    des = po_attributes['des']
+    event_num = po_attributes['event_num']
+    pickoff = Pickoff(des,event_num)
+    return pickoff
+
 def parse_at_bat(ab):
     ab_attributes = dict(ab.attrs)
     num = ab_attributes['num']
@@ -180,6 +188,10 @@ def parse_at_bat(ab):
         elif x.name == 'runner':
             runner = parse_runner(x)
             runners.append(runner)
+        elif x.name == 'po':
+            pickoff = parse_pickoff(x)
+            # Add the pickoff to the list of pitches
+            pitches.append(pickoff)
         else:
             raise('Invalid ab child' + x)
     at_bat.pitches = pitches
