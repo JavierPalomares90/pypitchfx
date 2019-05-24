@@ -1,8 +1,10 @@
+import uuid
 class AtBat:
 
     def __init__(self, num, b, s,o, start_tfs, 
         start_tfs_zulu, batter,stand,b_height,pitcher,
         p_throws,des,event_num,event,home_team_runs,away_team_runs,score='F'):
+        self.uuid = uuid.uuid4()
         self.num = num
         self.balls = b
         self.strikes = s

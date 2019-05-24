@@ -1,6 +1,8 @@
+import uuid
 class Action:
 
     def __init__(self,b,s,o,des,event,tfs,tfs_zulu,player,pitch,event_num,home_team_runs,away_team_runs):
+        self.uuid = uuid.uuid4()
         self.b = b
         self.s = s
         self.o = o

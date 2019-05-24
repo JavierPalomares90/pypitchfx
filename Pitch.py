@@ -1,9 +1,11 @@
+import uuid
 class Pitch:
 
     def __init__(self,des,id_,type_,tfs,tfs_zulu,x,y,event_num,sv_id,
     play_guid,start_speed,end_speed,sz_top,sz_bot,pfx_x,pfx_z,
     px,pz,x0,y0,z0,vx0,vy0,vz0,ax,ay,az,break_y,break_angle,break_length,
     pitch_type,type_confidence,zone,nasty,spin_dir,spin_rate,cc,mt):
+        self.uuid = uuid.uuid4()
         self.des = des
         self.id = id_
         self.type = type_
