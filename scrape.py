@@ -98,7 +98,7 @@ def parse_pitch(pitch_xml):
     y = pitch_attrs['y']
     event_num = pitch_attrs['event_num']
     sv_id = pitch_attrs['sv_id']
-    play_guid = pitch_attrs['play_guid'] #TODO: Generate guid
+    play_guid = pitch_attrs['play_guid'] 
     start_speed = pitch_attrs['start_speed']
     end_speed = pitch_attrs['end_speed']
     sz_top = pitch_attrs['sz_top']
@@ -120,7 +120,7 @@ def parse_pitch(pitch_xml):
     break_angle = pitch_attrs['break_angle']
     break_length = pitch_attrs['break_length']
     pitch_type = pitch_attrs['pitch_type']
-    type_conf = pitch_attrs['type_confidence'] #TODO: Why isn't there a pitch for the hit?
+    type_conf = pitch_attrs['type_confidence']
     zone = pitch_attrs['zone']
     nasty = pitch_attrs['nasty']
     spin_dir = pitch_attrs['spin_dir']
@@ -155,6 +155,14 @@ def parse_pickoff(po):
     pickoff = Pickoff(des,event_num)
     return pickoff
 
+def get_height_from_string(s):
+    height = 0
+    h = s.split('-')
+    feet = h[0]
+    inches = h[1]
+    height = 12 * feet + inches
+    return height
+
 def parse_at_bat(ab):
     ab_attributes = dict(ab.attrs)
     num = ab_attributes['num']
@@ -164,16 +172,27 @@ def parse_at_bat(ab):
     start_tfs = ab_attributes['start_tfs']
     start_tfs_zulu = ab_attributes['start_tfs_zulu']
     batter = ab_attributes['batter']
-    stand = ab_attributes['stand'] # TODO: Convert to binary
+    stand = ab_attributes['stand'] 
+    # convert stand to binary variable
+    if stand == 'L':
+        stand = 0
+    elif stand == 'R':
+        stand = 1
+    else:
+        raise("Invalid value for stand" + stand)
     b_height = ab_attributes['b_height']
+    # convert heigh to numeric
+    b_height = get_height_from_string(b_height)
     pitcher = ab_attributes['pitcher']
     p_throws = ab_attributes['p_throws']
     des = ab_attributes['des']
+
+    
     event_num = ab_attributes['event_num']
     event = ab_attributes['event']
     home_team_runs = ab_attributes['home_team_runs']
     away_team_runs = ab_attributes['away_team_runs'] # Is this after the atbat?
-    score = ab_attributes.get('score','F') #TODO: This is 'T' for true? It's also optional
+    score = ab_attributes.get('score','F')
 
     at_bat = AtBat(num,b,s,o,start_tfs,start_tfs_zulu,batter,
         stand,b_height,pitcher,p_throws,des,event_num,event,home_team_runs,away_team_runs,score)
@@ -246,6 +265,7 @@ def parse_inning(inning):
     num = innings_attr["num"]
     away_team = innings_attr["away_team"]
     home_team = innings_attr["home_team"]
+    
     nxt = innings_attr["next"]
     half_innings = list(inning.children)
     i = Inning(num,away_team,home_team,nxt)
