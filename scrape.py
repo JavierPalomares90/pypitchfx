@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup # required  pip3 install lxml
