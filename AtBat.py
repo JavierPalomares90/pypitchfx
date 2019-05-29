@@ -20,7 +20,7 @@ class AtBat:
         self.event_num = event_num
         self.event = event
         self.home_team_runs = home_team_runs
+        self.score=score
         self.away_team_runs = away_team_runs
         self.pitches = None
         self.runners = None
-
