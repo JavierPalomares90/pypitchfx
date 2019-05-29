@@ -157,8 +157,8 @@ def parse_pickoff(po):
 def get_height_from_string(s):
     height = 0
     h = s.split('-')
-    feet = h[0]
-    inches = h[1]
+    feet = int(h[0])
+    inches = int(h[1])
     height = 12 * feet + inches
     return height
 
