@@ -8,4 +8,5 @@ class Game:
         self.hole = hole
         self.ind = ind
         self.innings = None
+        self.url = None
     
