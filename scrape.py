@@ -88,44 +88,44 @@ def parse_game(game_xml):
 
 def parse_pitch(pitch_xml):
     pitch_attrs = dict(pitch_xml.attrs)
-    des = pitch_attrs['des']
-    id_var = pitch_attrs['id']
-    type_var = pitch_attrs['type']
-    tfs = pitch_attrs['tfs']
-    tfs_zulu = pitch_attrs['tfs_zulu']
-    x = pitch_attrs['x']
-    y = pitch_attrs['y']
-    event_num = pitch_attrs['event_num']
-    sv_id = pitch_attrs['sv_id']
-    play_guid = pitch_attrs['play_guid'] 
-    start_speed = pitch_attrs['start_speed']
-    end_speed = pitch_attrs['end_speed']
-    sz_top = pitch_attrs['sz_top']
-    sz_bot = pitch_attrs['sz_bot']
-    pfx_x = pitch_attrs['pfx_x']
-    pfx_z = pitch_attrs['pfx_z']
-    px = pitch_attrs['px']
-    pz = pitch_attrs['pz']
-    x0 = pitch_attrs['x0']
-    y0 = pitch_attrs['y0']
-    z0 = pitch_attrs['z0']
-    vx0 = pitch_attrs['vx0']
-    vy0 = pitch_attrs['vy0']
-    vz0 = pitch_attrs['vz0']
-    ax = pitch_attrs['ax']
-    ay = pitch_attrs['ay']
-    az = pitch_attrs['az']
-    break_y = pitch_attrs['break_y']
-    break_angle = pitch_attrs['break_angle']
-    break_length = pitch_attrs['break_length']
-    pitch_type = pitch_attrs['pitch_type']
-    type_conf = pitch_attrs['type_confidence']
-    zone = pitch_attrs['zone']
-    nasty = pitch_attrs['nasty']
-    spin_dir = pitch_attrs['spin_dir']
-    spin_rate = pitch_attrs['spin_rate']
-    cc = pitch_attrs['cc']
-    mt = pitch_attrs['mt']
+    des = pitch_attrs.get('des')
+    id_var = pitch_attrs.get('id')
+    type_var = pitch_attrs.get('type')
+    tfs = pitch_attrs.get('tfs')
+    tfs_zulu = pitch_attrs.get('tfs_zulu')
+    x = pitch_attrs.get('x')
+    y = pitch_attrs.get('y')
+    event_num = pitch_attrs.get('event_num')
+    sv_id = pitch_attrs.get('sv_id')
+    play_guid = pitch_attrs.get('play_guid')
+    start_speed = pitch_attrs.get('start_speed')
+    end_speed = pitch_attrs.get('end_speed')
+    sz_top = pitch_attrs.get('sz_top')
+    sz_bot = pitch_attrs.get('sz_bot')
+    pfx_x = pitch_attrs.get('pfx_x')
+    pfx_z = pitch_attrs.get('pfx_z')
+    px = pitch_attrs.get('px')
+    pz = pitch_attrs.get('pz')
+    x0 = pitch_attrs.get('x0')
+    y0 = pitch_attrs.get('y0')
+    z0 = pitch_attrs.get('z0')
+    vx0 = pitch_attrs.get('vx0')
+    vy0 = pitch_attrs.get('vy0')
+    vz0 = pitch_attrs.get('vz0')
+    ax = pitch_attrs.get('ax')
+    ay = pitch_attrs.get('ay')
+    az = pitch_attrs.get('az')
+    break_y = pitch_attrs.get('break_y')
+    break_angle = pitch_attrs.get('break_angle')
+    break_length = pitch_attrs.get('break_length')
+    pitch_type = pitch_attrs.get('pitch_type')
+    type_conf = pitch_attrs.get('type_confidence')
+    zone = pitch_attrs.get('zone')
+    nasty = pitch_attrs.get('nasty')
+    spin_dir = pitch_attrs.get('spin_dir')
+    spin_rate = pitch_attrs.get('spin_rate')
+    cc = pitch_attrs.get('cc')
+    mt = pitch_attrs.get('mt')
 
     pitch = Pitch(des,id_var,type_var,tfs,tfs_zulu,x,y,event_num,sv_id,
     play_guid,start_speed,end_speed,sz_top,sz_bot,pfx_x,pfx_z,
@@ -285,6 +285,7 @@ def parse_innnings_all(innings_all):
         for inni in innings_xml:
             innings.append(parse_inning(inni))
         game.innings = innings
+        game.url = url
         games.append(game)
     return games
         
