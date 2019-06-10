@@ -252,11 +252,12 @@ def parse_half_inning(half):
 
 def add_half_innings(inning,half_innings):
     top = half_innings[0]
-    bottom = half_innings[1]
     top_inning = parse_half_inning(top)
-    bottom_inning = parse_half_inning(bottom)
     inning.top = top_inning
-    inning.bottom = bottom_inning
+    if(len(half_innings) > 1):
+        bottom = half_innings[1]
+        bottom_inning = parse_half_inning(bottom)
+        inning.bottom = bottom_inning
     return inning
 
 def parse_inning(inning):
@@ -286,7 +287,6 @@ def parse_innnings_all(innings_all):
             innings.append(parse_inning(inni))
         game.innings = innings
         game.url = url
-        games.append(game)
     return games
         
 
