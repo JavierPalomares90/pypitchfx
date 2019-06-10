@@ -23,7 +23,7 @@ VALUES(
     '{at_bat}',
     '{deck}',
     '{hole}',
-    {ind},
+    '{ind}',
     ARRAY{innings_id},
     '{url}'
 );
@@ -54,7 +54,7 @@ INSERT INTO half_inning(
     inning_id) 
 VALUES(
     '{half_inning_id}',
-    ARRAY{at_bats_actions_id},
+    ARRAY{at_bats_actions_id}::VARCHAR(36)[],
     '{inning_id}'
 );"""
 INSERT_ACTION="""
