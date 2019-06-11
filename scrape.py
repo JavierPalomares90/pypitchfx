@@ -187,7 +187,7 @@ def parse_at_bat(ab):
     des = ab_attributes['des']
 
     
-    event_num = ab_attributes['event_num']
+    event_num = ab_attributes.get('event_num',-1)
     event = ab_attributes['event']
     home_team_runs = ab_attributes['home_team_runs']
     away_team_runs = ab_attributes['away_team_runs'] # Is this after the atbat?
