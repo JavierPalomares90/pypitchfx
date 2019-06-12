@@ -276,17 +276,20 @@ def parse_inning(inning):
 def parse_innnings_all(innings_all):
     games = []
     for url in innings_all:
-        resp = requests.get(url)
-        contents = resp.content
-        soup = BeautifulSoup(contents,'xml')
-        game_xml = soup.find('game')
-        game = parse_game(game_xml)
-        innings_xml = soup.find_all('inning')
-        innings = []
-        for inni in innings_xml:
-            innings.append(parse_inning(inni))
-        game.innings = innings
-        game.url = url
+        try:
+            resp = requests.get(url)
+            contents = resp.content
+            soup = BeautifulSoup(contents,'xml')
+            game_xml = soup.find('game')
+            game = parse_game(game_xml)
+            innings_xml = soup.find_all('inning')
+            innings = []
+            for inni in innings_xml:
+                innings.append(parse_inning(inni))
+            game.innings = innings
+            game.url = url
+        except:
+            print('unable to load game {}'.format(url))
     return games
         
 
