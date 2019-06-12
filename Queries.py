@@ -171,7 +171,8 @@ INSERT_PITCH="""INSERT INTO pitch(
     spin_rate,
     cc,
     mt,
-    at_bat_id)
+    at_bat_id,
+    outcome)
 VALUES(
     '{pitch_id}',
     '{des}',
@@ -210,7 +211,8 @@ VALUES(
     {spin_rate},
     '{cc}',
     '{mt}',
-    '{at_bat_id}'
+    '{at_bat_id}',
+    {outcome}
 );"""
 INSERT_RUNNER="""
 INSERT INTO runner(
