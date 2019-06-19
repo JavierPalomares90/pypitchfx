@@ -3,7 +3,7 @@ import pandas as pd
 from bs4 import BeautifulSoup # required  pip3 install lxml
 import gids as gds
 import argparse
-from datetime import datetime
+from datetime import datetime,timedelta,date
 import requests
 from Game import Game
 from Inning import Inning
@@ -33,16 +33,30 @@ def gids2urls(gids):
     return urls
 
 def parse_scoreboard_xml(scoreboard_xml):
-    pass
+    game_ids = []
+    go_games = scoreboard_xml.find_all('go_game')
+    for game in go_games:
+        game_xml = game.find_all('game')[0]
+        attrs = dict(game_xml.attrs)
+        game_id = attrs['id']
+        game_ids.append(game_id)
+    return game_ids
 
-def get_gids_for_day(day):
-    url = "{root}/year_{year}/month_{month}/day_{day}/scoreboard.xml".format(root=root,year=year,month=month,day=day,id=gid)
+def get_gids_for_day(day_date):
+    year = day_date.year
+    month = day_date.month
+    day = day_date.day
+    url = "{}/year_{}/month_{:02d}/day_{:02d}/scoreboard.xml".format(root,year,month,day)
     resp = requests.get(url)
     contents = resp.content
     soup = BeautifulSoup(contents,'xml')
     scoreboard_xml = soup.find('scoreboard')
     return parse_scoreboard_xml(scoreboard_xml)
 
+
+def daterange(start_date, end_date):
+    for n in range(int ((end_date - start_date).days)):
+        yield start_date + timedelta(n)
 
 def makeUrls(start=None,end=None,gids=None):
     if gids is None:
@@ -52,7 +66,7 @@ def makeUrls(start=None,end=None,gids=None):
         start_date = datetime.strptime(start,"%Y-%m-%d")
         end_date = datetime.strptime(end,"%Y-%m-%d")
         subset_gids=[]
-        for day in datetime.daterange(start_date,end_date):
+        for day in daterange(start_date,end_date):
             gids_day = get_gids_for_day(day)
             subset_gids.append(gids_day)
         return gids2urls(subset_gids)
