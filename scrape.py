@@ -310,6 +310,7 @@ def get_args():
     parser = argparse.ArgumentParser(description='Scrape data')
     parser.add_argument('-s','--start')
     parser.add_argument('-e','--end')
+    parser.add_argument('-g','--gameId',required=False,type=list)
     args = parser.parse_args()
     return args
 
@@ -317,7 +318,8 @@ def main():
     args = get_args()
     start = args.start
     end = args.end
-    scrape(start,end)
+    gameId = args.gameId
+    scrape(start,end,game_ids=gameId)
 
 if __name__=="__main__":
     main()
