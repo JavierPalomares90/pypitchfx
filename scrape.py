@@ -19,10 +19,10 @@ Python tool to scrape pitchf/x data from mlb's website.
 Inspired by pitchfx package written in R
 Author: Javier Palomares
 '''
+root = "http://gd2.mlb.com/components/game/mlb"
 
 def gids2urls(gids):
     urls = []
-    root = "http://gd2.mlb.com/components/game/mlb"
     for gid in gids:
        elements = gid.split('_') 
        year = elements[1]
@@ -32,13 +32,29 @@ def gids2urls(gids):
        urls.append(url)
     return urls
 
+def parse_scoreboard_xml(scoreboard_xml):
+    pass
+
+def get_gids_for_day(day):
+    url = "{root}/year_{year}/month_{month}/day_{day}/scoreboard.xml".format(root=root,year=year,month=month,day=day,id=gid)
+    resp = requests.get(url)
+    contents = resp.content
+    soup = BeautifulSoup(contents,'xml')
+    scoreboard_xml = soup.find('scoreboard')
+    return parse_scoreboard_xml(scoreboard_xml)
+
 
 def makeUrls(start=None,end=None,gids=None):
     if gids is None:
         if start is None or end is None:
             raise Exception("Need to specify start or end")
-        gids = gds.get_gids()
-        subset_gids = get_subset_gids(gids,start,end)
+        # Get all the gids by parsing the scoreboard for each day
+        start_date = datetime.strptime(start,"%Y-%m-%d")
+        end_date = datetime.strptime(end,"%Y-%m-%d")
+        subset_gids=[]
+        for day in datetime.daterange(start_date,end_date):
+            gids_day = get_gids_for_day(day)
+            subset_gids.append(gids_day)
         return gids2urls(subset_gids)
         
         
