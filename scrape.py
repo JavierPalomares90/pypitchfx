@@ -54,8 +54,9 @@ def get_gids_for_day(day_date):
     return parse_scoreboard_xml(scoreboard_xml)
 
 
+# returns the days between the start and end date, inclusive
 def daterange(start_date, end_date):
-    for n in range(int ((end_date - start_date).days)):
+    for n in range(int ((end_date - start_date).days) + 1):
         yield start_date + timedelta(n)
 
 def makeUrls(start=None,end=None,gids=None):
@@ -68,7 +69,7 @@ def makeUrls(start=None,end=None,gids=None):
         subset_gids=[]
         for day in daterange(start_date,end_date):
             gids_day = get_gids_for_day(day)
-            subset_gids.append(gids_day)
+            subset_gids = subset_gids + gids_day
         return gids2urls(subset_gids)
         
         
