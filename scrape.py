@@ -25,10 +25,10 @@ def gids2urls(gids):
     urls = []
     for gid in gids:
        elements = gid.split('_') 
-       year = elements[1]
-       month = elements[2]
-       day = elements[3]
-       url = "{root}/year_{year}/month_{month}/day_{day}/{id}".format(root=root,year=year,month=month,day=day,id=gid)
+       year = elements[0]
+       month = elements[1]
+       day = elements[2]
+       url = "{root}/year_{year}/month_{month}/day_{day}/gid_{id}".format(root=root,year=year,month=month,day=day,id=gid)
        urls.append(url)
     return urls
 
