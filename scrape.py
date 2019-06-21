@@ -13,6 +13,7 @@ from Pitch import Pitch
 from Runner import Runner
 from Action import Action
 from Pickoff import Pickoff
+from load_players import load_game
 
 '''
 Python tool to scrape pitchf/x data from mlb's website.
@@ -319,8 +320,10 @@ def parse_innnings_all(innings_all):
                 innings.append(parse_inning(inni))
             game.innings = innings
             game.url = url
-        except:
+            load_game(game)
+        except Exception as e:
             print('unable to load game {}'.format(url))
+            print(e)
     return games
         
 
