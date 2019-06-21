@@ -1,18 +1,17 @@
 import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup # required  pip3 install lxml
-import gids as gds
 import argparse
 from datetime import datetime
 import requests
-from Game import Game
-from Inning import Inning
-from AtBat import AtBat
-from HalfInning import HalfInning
-from Pitch import Pitch
-from Runner import Runner
-from Action import Action
-from Pickoff import Pickoff
+from gameday_model.Game import Game
+from gameday_model.Action import Action
+from gameday_model.AtBat import AtBat
+from gameday_model.GamePlayer import GamePlayer
+from gameday_model.HalfInning import HalfInning
+from gameday_model.Inning import Inning
+from gameday_model.Pickoff import Pickoff
+from gameday_model.Runner import Runner
 
 '''
 Python tool to scrape pitchf/x data from mlb's website.
