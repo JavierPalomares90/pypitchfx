@@ -114,4 +114,54 @@ def  get_gid_from_url(url):
     #TODO: Finish impl
     pass
 
+def get_ids(pojos):
+    ids = []
+    for i in pojos:
+        id_ = str(i.uuid)
+        ids.append(id_)
+    return ids
+
+def get_boolean_from_TF(b):
+    if b =='T' or b == 'Y':
+        return True
+    elif b == 'F' or b =='N':
+        return False
+    else:
+        raise("Invalid boolean " +b )
+
+def get_at_bat_outcome(ab):
+    # For now, good event if we get an out
+    event = ab.event.lower()
+    if 'out' in event:
+        return 1.0
+    # else, bad outcome
+    return 0
+
+def get_pitch_outcome(pitch):
+    des = pitch.des.lower()
+    # good pitch if we get foul or out or strike
+    if 'foul' in des or 'out' in des or 'strike' in des:
+        return 1.0
+    return 0
+
+def zulu_to_ts(start):
+    start = start.replace('T', ' ')
+    start = start.replace('Z', '')
+    if start == '':
+        return None
+    return start
+
+def runner_base_to_int(pos):
+    #TODO: Test
+    if pos == "":
+        return 0
+    elif pos == '1B':
+        return 1
+    elif pos == '2B':
+        return 2
+    elif pos == '3B':
+        return 3
+    else:
+        raise("invalid runner base" + pos)
+
 
