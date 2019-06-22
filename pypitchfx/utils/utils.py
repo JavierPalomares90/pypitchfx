@@ -5,7 +5,7 @@ import argparse
 from datetime import datetime,timedelta, date
 from bs4 import BeautifulSoup # required  pip3 install lxml
 import requests
-from parse.parse import parse_scoreboard_xml
+from pypitchfx.parse.parse import parse_scoreboard_xml
 import re
 
 _GAMEDAY_ROOT = "http://gd2.mlb.com/components/game/mlb"

@@ -3,16 +3,9 @@ import pandas as pd
 from bs4 import BeautifulSoup # required  pip3 install lxml
 from datetime import datetime
 import requests
-from gameday_model.Game import Game
-from gameday_model.Action import Action
-from gameday_model.AtBat import AtBat
-from gameday_model.GamePlayer import GamePlayer
-from gameday_model.HalfInning import HalfInning
-from gameday_model.Inning import Inning
-from gameday_model.Pickoff import Pickoff
-from gameday_model.Runner import Runner
-from parse.parse import *
-from utils.utils import *
+from pypitchfx.gameday_model import *
+from pypitchfx.parse.parse import *
+from pypitchfx.utils.utils import *
 
 '''
 Python tool to scrape pitchf/x data from MLB's Gameday repo

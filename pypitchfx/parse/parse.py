@@ -1,14 +1,7 @@
 # Helper class to parse xml from Gameday xml into objects
 # Author: Javier Palomares
 
-from gameday_model.Game import Game
-from gameday_model.Action import Action
-from gameday_model.AtBat import AtBat
-from gameday_model.GamePlayer import GamePlayer
-from gameday_model.HalfInning import HalfInning
-from gameday_model.Inning import Inning
-from gameday_model.Pickoff import Pickoff
-from gameday_model.Runner import Runner
+from pypitchfx.gameday_model import *
 import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup # required  pip3 install lxml

@@ -1,6 +1,6 @@
-from utils.utils import *
-from gameday_model.GamePlayer import GamePlayer
 from pypitchfx.load.Queries import *
+from pypitchfx.gameday_model import GamePlayer
+from pypitchfx.utils.utils import *
 
 def insert_player(cursor,player):
     player_id = player['id']
