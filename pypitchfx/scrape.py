@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup # required  pip3 install lxml
-import argparse
 from datetime import datetime
 import requests
 from gameday_model.Game import Game
@@ -12,8 +11,8 @@ from gameday_model.HalfInning import HalfInning
 from gameday_model.Inning import Inning
 from gameday_model.Pickoff import Pickoff
 from gameday_model.Runner import Runner
-from parse import *
-from utils import *
+from parse.parse import *
+from utils.utils import *
 
 '''
 Python tool to scrape pitchf/x data from MLB's Gameday repo
@@ -31,9 +30,7 @@ def add_half_innings(inning,half_innings):
         inning.bottom = bottom_inning
     return inning
 
-        
-
-def scrape(start,end,game_ids=None,suffix="inning/inning_all.xml",db_connection=None):
+def scrape(start,end,game_ids=None,db_connection=None):
     if game_ids is None:
         game_dir = makeUrls(start,end)
     else:
@@ -45,19 +42,13 @@ def scrape(start,end,game_ids=None,suffix="inning/inning_all.xml",db_connection=
     innings_hit = get_innings_hit(game_dir)
     mini_scoreboard = get_miniscoreboard(game_dir)
     games = parse_innings_all(innings_all)
-    
-def get_args():
-    parser = argparse.ArgumentParser(description='Scrape data')
-    parser.add_argument('-s','--start')
-    parser.add_argument('-e','--end')
-    args = parser.parse_args()
-    return args
 
 def main():
     args = get_args()
     start = args.start
     end = args.end
-    scrape(start,end)
+    gids = args.gameId
+    scrape(start,end,game_ids=gids)
 
 if __name__=="__main__":
     main()

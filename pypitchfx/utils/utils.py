@@ -1,6 +1,12 @@
 # Utils class for various helper methods
 # Author: Javier Palomares
 
+import argparse
+from datetime import datetime,timedelta, date
+from bs4 import BeautifulSoup # required  pip3 install lxml
+import requests
+from parse.parse import parse_scoreboard_xml
+
 _GAMEDAY_ROOT = "http://gd2.mlb.com/components/game/mlb"
 
 def gids2urls(gids):
@@ -15,20 +21,12 @@ def gids2urls(gids):
        urls.append(url)
     return urls
 
-def parse_scoreboard_xml(scoreboard_xml):
-    game_ids = []
-    go_games = scoreboard_xml.find_all('go_game')
-    for game in go_games:
-        game_xml = game.find_all('game')[0]
-        attrs = dict(game_xml.attrs)
-        game_id = attrs['id']
-        game_ids.append(game_id)
-    return game_ids
 
 def get_gids_for_day(day_date):
     year = day_date.year
     month = day_date.month
     day = day_date.day
+    root = _GAMEDAY_ROOT
     url = "{}/year_{}/month_{:02d}/day_{:02d}/scoreboard.xml".format(root,year,month,day)
     resp = requests.get(url)
     contents = resp.content
@@ -94,7 +92,7 @@ def get_args():
     parser = argparse.ArgumentParser(description='Scrape data')
     parser.add_argument('-s','--start')
     parser.add_argument('-e','--end')
-    parser.add_argument('-g','--gameId',required=False,type=list)
+    parser.add_argument('-g','--gameId',required=False,type=list,nargs='+')
     args = parser.parse_args()
     return args
 
