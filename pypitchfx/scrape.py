@@ -30,18 +30,18 @@ def add_half_innings(inning,half_innings):
         inning.bottom = bottom_inning
     return inning
 
-def scrape(start,end,game_ids=None,db_connection=None):
+def scrape(start=None,end=None,game_ids=None,db_connection=None):
     if game_ids is None:
-        game_dir = makeUrls(start,end)
-    else:
-        game_dir = makeUrls(gids=game_ids)
-    for url in game_dir:
+        if start is None or end is None:
+            raise('Specify the start and end dates, or give the game ids')
+    game_urls = makeUrls(start,end,game_ids)
+    for url in game_urls:
         print(url)
-    innings_all = get_innings_all(game_dir)
-    players = get_players(game_dir)
-    innings_hit = get_innings_hit(game_dir)
-    mini_scoreboard = get_miniscoreboard(game_dir)
-    games = parse_innings_all(innings_all)
+    innings_all = get_innings_all(game_urls)
+    players = get_players(game_urls)
+    innings_hit = get_innings_hit(game_urls)
+    mini_scoreboard = get_miniscoreboard(game_urls)
+    games = parse_innings_all(game_urls)
 
 def main():
     args = get_args()

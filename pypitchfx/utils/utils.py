@@ -46,11 +46,11 @@ def makeUrls(start=None,end=None,gids=None):
         # Get all the gids by parsing the scoreboard for each day
         start_date = datetime.strptime(start,"%Y-%m-%d")
         end_date = datetime.strptime(end,"%Y-%m-%d")
-        subset_gids=[]
+        gids=[]
         for day in daterange(start_date,end_date):
             gids_day = get_gids_for_day(day)
-            subset_gids = subset_gids + gids_day
-        return gids2urls(subset_gids)
+            gids = gids + gids_day
+    return gids2urls(gids)
         
         
 def get_subset_gids(gids,first,last):
@@ -92,7 +92,7 @@ def get_args():
     parser = argparse.ArgumentParser(description='Scrape data')
     parser.add_argument('-s','--start')
     parser.add_argument('-e','--end')
-    parser.add_argument('-g','--gameId',required=False,type=list,nargs='+')
+    parser.add_argument('-g','--gameId',required=False,nargs='+')
     args = parser.parse_args()
     return args
 
