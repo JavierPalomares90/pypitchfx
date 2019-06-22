@@ -229,4 +229,12 @@ def parse_innings_all(innings_all,db_connection=None):
 def parse_players(players_urls,db_connection=None):
     players = []
     for url in players_urls:
-        pass
+        try:
+            resp = requests.get(url)
+            contents = resp.content
+            soup = BeautifulSoup(contents,'xml')
+            #TODO: Finish parsing players
+        except Exception as e:
+            print('unable to load player {}'.format(url))
+            print(e)
+    return players 
