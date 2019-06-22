@@ -1,3 +1,6 @@
+# Helper class to parse xml from Gameday xml into objects
+# Author: Javier Palomares
+
 from gameday_model.Game import Game
 from gameday_model.Action import Action
 from gameday_model.AtBat import AtBat
@@ -10,8 +13,115 @@ import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup # required  pip3 install lxml
 import argparse
-from datetime import datetime
+from datetime import datetime,timedelta,date
 import requests
+
+<<<<<<< HEAD:pypitchfx/parse.py
+=======
+from Game import Game
+from Inning import Inning
+from AtBat import AtBat
+from HalfInning import HalfInning
+from Pitch import Pitch
+from Runner import Runner
+from Action import Action
+from Pickoff import Pickoff
+from load_players import load_game
+
+'''
+Python tool to scrape pitchf/x data from mlb's website.
+Inspired by pitchfx package written in R
+Author: Javier Palomares
+'''
+root = "http://gd2.mlb.com/components/game/mlb"
+
+def gids2urls(gids):
+    urls = []
+    for gid in gids:
+       elements = gid.split('_') 
+       year = elements[0]
+       month = elements[1]
+       day = elements[2]
+       url = "{root}/year_{year}/month_{month}/day_{day}/gid_{id}".format(root=root,year=year,month=month,day=day,id=gid)
+       urls.append(url)
+    return urls
+
+def parse_scoreboard_xml(scoreboard_xml):
+    game_ids = []
+    go_games = scoreboard_xml.find_all('go_game')
+    for game in go_games:
+        game_xml = game.find_all('game')[0]
+        attrs = dict(game_xml.attrs)
+        game_id = attrs['id']
+        game_ids.append(game_id)
+    return game_ids
+
+def get_gids_for_day(day_date):
+    year = day_date.year
+    month = day_date.month
+    day = day_date.day
+    url = "{}/year_{}/month_{:02d}/day_{:02d}/scoreboard.xml".format(root,year,month,day)
+    resp = requests.get(url)
+    contents = resp.content
+    soup = BeautifulSoup(contents,'xml')
+    scoreboard_xml = soup.find('scoreboard')
+    return parse_scoreboard_xml(scoreboard_xml)
+
+
+# returns the days between the start and end date, inclusive
+def daterange(start_date, end_date):
+    for n in range(int ((end_date - start_date).days) + 1):
+        yield start_date + timedelta(n)
+
+def makeUrls(start=None,end=None,gids=None):
+    if gids is None:
+        if start is None or end is None:
+            raise Exception("Need to specify start or end")
+        # Get all the gids by parsing the scoreboard for each day
+        start_date = datetime.strptime(start,"%Y-%m-%d")
+        end_date = datetime.strptime(end,"%Y-%m-%d")
+        subset_gids=[]
+        for day in daterange(start_date,end_date):
+            gids_day = get_gids_for_day(day)
+            subset_gids = subset_gids + gids_day
+        return gids2urls(subset_gids)
+        
+        
+def get_subset_gids(gids,first,last):
+    list = []
+    first_dt = datetime.strptime(first,"%Y-%m-%d")
+    last_dt = datetime.strptime(last,"%Y-%m-%d")
+    for gid in gids:
+        elements = gid.split('_')
+        gid_dt = datetime.strptime(elements[1]+"-"+elements[2]+"-"+elements[3],"%Y-%m-%d")
+        if(first_dt <= gid_dt and gid_dt <= last_dt):
+            list.append(gid)
+    return list
+
+def get_innings_all(game_dir):
+    innings_all = []
+    for game in game_dir:
+        innings_all.append(game+"/inning/inning_all.xml")
+    return innings_all
+
+def get_players(game_dir):
+    players = []
+    for game in game_dir:
+        players.append(game + "/players.xml")
+    return players
+
+def get_innings_hit(game_dir):
+    innings_hit = []
+    for game in game_dir:
+        innings_hit.append(game + "/inning/inning_hit.xml")
+    return innings_hit
+
+def get_miniscoreboard(game_dir):
+    miniscoreboard = []
+    for game in game_dir:
+        miniscoreboard.append(game + "/miniscoreboard.xml")
+    return miniscoreboard
+>>>>>>> feature/getAllGames:scrape.py
 
 def parse_game(game_xml):
     game_attrs = dict(game_xml.attrs)
@@ -206,6 +316,43 @@ def parse_innings_all(innings_all):
                 innings.append(parse_inning(inni))
             game.innings = innings
             game.url = url
-        except:
+            load_game(game)
+        except Exception as e:
             print('unable to load game {}'.format(url))
+            print(e)
     return games
+<<<<<<< HEAD:pypitchfx/parse.py
+=======
+        
+
+def scrape(start,end,game_ids=None,suffix="inning/inning_all.xml",db_connection=None):
+    if game_ids is None:
+        game_dir = makeUrls(start,end)
+    else:
+        game_dir = makeUrls(gids=game_ids)
+    for url in game_dir:
+        print(url)
+    innings_all = get_innings_all(game_dir)
+    players = get_players(game_dir)
+    innings_hit = get_innings_hit(game_dir)
+    mini_scoreboard = get_miniscoreboard(game_dir)
+    games = parse_innnings_all(innings_all)
+    
+def get_args():
+    parser = argparse.ArgumentParser(description='Scrape data')
+    parser.add_argument('-s','--start')
+    parser.add_argument('-e','--end')
+    parser.add_argument('-g','--gameId',required=False,type=list)
+    args = parser.parse_args()
+    return args
+
+def main():
+    args = get_args()
+    start = args.start
+    end = args.end
+    gameId = args.gameId
+    scrape(start,end,game_ids=gameId)
+
+if __name__=="__main__":
+    main()
+>>>>>>> feature/getAllGames:scrape.py
