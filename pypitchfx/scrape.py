@@ -30,25 +30,27 @@ def add_half_innings(inning,half_innings):
         inning.bottom = bottom_inning
     return inning
 
-def scrape(start=None,end=None,game_ids=None,db_connection=None):
+# Return the games and players for the given date range or list of ids
+# Pass in a db_connection to write the games and players to a relational DB
+def scrape_games_players(start=None,end=None,game_ids=None,db_connection=None):
     if game_ids is None:
         if start is None or end is None:
             raise('Specify the start and end dates, or give the game ids')
     game_urls = makeUrls(start,end,game_ids)
     for url in game_urls:
         print(url)
-    innings_all = get_innings_all(game_urls)
-    players = get_players(game_urls)
-    innings_hit = get_innings_hit(game_urls)
-    mini_scoreboard = get_miniscoreboard(game_urls)
-    games = parse_innings_all(game_urls)
+    innings_all_urls = get_innings_all_urls(game_urls)
+    players_urls = get_players_urls(game_urls)
+    games = parse_innings_all(innings_all_urls,db_connection)
+    players = parse_players(players_urls,db_connection)
+    return games,players
 
 def main():
     args = get_args()
     start = args.start
     end = args.end
     gids = args.gameId
-    scrape(start,end,game_ids=gids)
+    games,players = scrape_games_players(start,end,game_ids=gids)
 
 if __name__=="__main__":
     main()

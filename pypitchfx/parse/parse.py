@@ -202,7 +202,9 @@ def parse_inning(inning):
     return i
 
 
-def parse_innings_all(innings_all):
+# Parse the url to the /inning/inning_all.xml url
+# Load the games using the  db_connection if passed in
+def parse_innings_all(innings_all,db_connection=None):
     games = []
     for url in innings_all:
         try:
@@ -217,8 +219,14 @@ def parse_innings_all(innings_all):
                 innings.append(parse_inning(inni))
             game.innings = innings
             game.url = url
-            load_game(game)
         except Exception as e:
             print('unable to load game {}'.format(url))
             print(e)
     return games
+
+# Parse the url to the /players.xml url
+# Load the player using the db_connection if passed in
+def parse_players(players_urls,db_connection=None):
+    players = []
+    for url in players_urls:
+        pass

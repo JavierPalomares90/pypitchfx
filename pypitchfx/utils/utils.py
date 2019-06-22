@@ -26,8 +26,8 @@ def get_gids_for_day(day_date):
     year = day_date.year
     month = day_date.month
     day = day_date.day
-    root = _GAMEDAY_ROOT
-    url = "{}/year_{}/month_{:02d}/day_{:02d}/scoreboard.xml".format(root,year,month,day)
+    url = get_scoreboard_url(year,month,day)
+
     resp = requests.get(url)
     contents = resp.content
     soup = BeautifulSoup(contents,'xml')
@@ -64,29 +64,34 @@ def get_subset_gids(gids,first,last):
             list.append(gid)
     return list
 
-def get_innings_all(game_dir):
+def get_innings_all_urls(game_urls):
     innings_all = []
-    for game in game_dir:
+    for game in game_urls:
         innings_all.append(game+"/inning/inning_all.xml")
     return innings_all
 
-def get_players(game_dir):
+def get_players_urls(game_urls):
     players = []
-    for game in game_dir:
+    for game in game_urls:
         players.append(game + "/players.xml")
     return players
 
-def get_innings_hit(game_dir):
+def get_innings_hit_urls(game_urls):
     innings_hit = []
-    for game in game_dir:
+    for game in game_urls:
         innings_hit.append(game + "/inning/inning_hit.xml")
     return innings_hit
 
-def get_miniscoreboard(game_dir):
+def get_miniscoreboard_urls(game_urls):
     miniscoreboard = []
-    for game in game_dir:
+    for game in game_urls:
         miniscoreboard.append(game + "/miniscoreboard.xml")
     return miniscoreboard
+
+def get_scoreboard_url(year,month,day):
+    root = _GAMEDAY_ROOT
+    url = "{}/year_{}/month_{:02d}/day_{:02d}/scoreboard.xml".format(root,year,month,day)
+    return url
 
 def get_args():
     parser = argparse.ArgumentParser(description='Scrape data')
