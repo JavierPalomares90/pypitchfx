@@ -9,4 +9,5 @@ class Game:
         self.ind = ind
         self.innings = None
         self.url = None
+        self.gid = None
     

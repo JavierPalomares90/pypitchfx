@@ -41,8 +41,8 @@ def scrape_games_players(start=None,end=None,game_ids=None,db_connection=None):
         print(url)
     innings_all_urls = get_innings_all_urls(game_urls)
     players_urls = get_players_urls(game_urls)
-    games = parse_innings_all(innings_all_urls,db_connection)
     players = parse_players(players_urls,db_connection)
+    games = parse_innings_all(innings_all_urls,db_connection)
     return games,players
 
 def main():

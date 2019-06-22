@@ -6,6 +6,7 @@ from datetime import datetime,timedelta, date
 from bs4 import BeautifulSoup # required  pip3 install lxml
 import requests
 from parse.parse import parse_scoreboard_xml
+import re
 
 _GAMEDAY_ROOT = "http://gd2.mlb.com/components/game/mlb"
 
@@ -108,3 +109,9 @@ def get_height_from_string(s):
     inches = int(h[1])
     height = 12 * feet + inches
     return height
+
+def  get_gid_from_url(url):
+    #TODO: Finish impl
+    pass
+
+

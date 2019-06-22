@@ -207,6 +207,7 @@ def parse_inning(inning):
 def parse_innings_all(innings_all,db_connection=None):
     games = []
     for url in innings_all:
+        gid = get_gid_from_url(url)
         try:
             resp = requests.get(url)
             contents = resp.content
@@ -219,10 +220,65 @@ def parse_innings_all(innings_all,db_connection=None):
                 innings.append(parse_inning(inni))
             game.innings = innings
             game.url = url
+            game.gid = gid
         except Exception as e:
             print('unable to load game {}'.format(url))
             print(e)
     return games
+
+def parse_player(player,gid):
+    player_attrs = dict(player.attrs)
+    _id = player_attrs.get('id')
+    first = player_attrs.get('first')
+    last = player_attrs.get('last')
+    num = player_attrs.get('num')
+    boxname = player_attrs.get('boxname')
+    rl = player_attrs.get('rl')
+    bats = player_attrs.get('bats')
+    position = player_attrs.get('position')
+    _status = player_attrs.get('status')
+    team_abbrev = player_attrs.get('team_abbrev')
+    team_id = player_attrs.get('team_id')
+    parent_team_abbrev = player_attrs.get('parent_team_abbrev')
+    parent_team_id = player_attrs.get('parent_team_id')
+    avg = player_attrs.get('avg')
+    hr = player_attrs.get('hr')
+    rbi = player_attrs.get('rbi')
+    current_position = player_attrs.get('current_position')
+    bat_order = player_attrs.get('bat_order')
+    game_position = player_attrs.get('game_position')
+    wins = player_attrs.get('wins')
+    losses = player_attrs.get('losses')
+    era = player_attrs.get('era')
+    
+    p = gameday_model.GamePlayer()
+    p.gid = gid
+    p.id = _id
+    p.first = first
+    p.last = last
+    p.num = num
+    p.boxname = boxname
+    p.rl = rl
+    p.bats = bats
+    p.position = position
+    p.status = _status
+    p.team_abbrev = team_abbrev
+    p.team_id = team_id
+    p.parent_team_abbrev = parent_team_abbrev
+    p.parent_team_id = parent_team_id
+    p.avg = avg
+    p.hr = hr
+    p.rbi = rbi
+    p.current_position = current_position
+    p.bat_order = bat_order
+    p.game_position = game_position
+    p.wins = wins
+    p.losses = losses
+    p.era = era
+    
+    return p
+
+
 
 # Parse the url to the /players.xml url
 # Load the player using the db_connection if passed in
@@ -230,10 +286,14 @@ def parse_players(players_urls,db_connection=None):
     players = []
     for url in players_urls:
         try:
+            gid = get_gid_from_url(url)
             resp = requests.get(url)
             contents = resp.content
             soup = BeautifulSoup(contents,'xml')
-            #TODO: Finish parsing players
+            players_xml = soup.find_all('player')
+            players = []
+            for player_xml in players_xml:
+                players.append(parse_player(player_xml,gid))
         except Exception as e:
             print('unable to load player {}'.format(url))
             print(e)

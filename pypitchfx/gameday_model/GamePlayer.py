@@ -1,7 +1,7 @@
 class GamePlayer:
     # need to add a game_id to this 
-    def __init__(self,id,first,last,num,boxname,rl,bats,position,status,team_abbrev,team_id,parent_team_abbrev,parent_team_id,avg,hr,rbi,current_position,bat_order,game_position,wins,losses,era):
-        self.id = id
+    def __init__(self,_id,first,last,num,boxname,rl,bats,position,status,team_abbrev,team_id,parent_team_abbrev,parent_team_id,avg,hr,rbi,current_position,bat_order,game_position,wins,losses,era):
+        self.id = _id
         self.first=first
         self.last = last
         self.num=num
@@ -23,5 +23,6 @@ class GamePlayer:
         self.wins = wins
         self.losses = losses
         self.era = era
+        self.gid = None
 
 
