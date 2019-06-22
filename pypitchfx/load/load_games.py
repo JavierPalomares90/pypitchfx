@@ -1,8 +1,7 @@
 from pypitchfx.load.Queries import *
 from pypitchfx.gameday_model import *
 from pypitchfx.utils.utils import *
-
-
+from sqlalchemy.sql import text
 
 def insert_game(conn,game):
     print('Inserting {}\n'.format(game.url))
@@ -221,4 +220,3 @@ def insert_innings(conn,game):
 def load_game(game,conn):
     insert_game(conn,game)
     insert_innings(conn,game)
-    conn.close()

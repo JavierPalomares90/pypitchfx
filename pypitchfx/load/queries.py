@@ -248,3 +248,7 @@ VALUES (
     {event_num},
     '{at_bat_id}'
 );"""
+
+#TODO: Finish impl
+INSERT_GAMEPLAYER="""
+"""
