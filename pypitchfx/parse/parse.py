@@ -4,6 +4,7 @@
 from pypitchfx.gameday_model import *
 from pypitchfx.load.load_players import load_player
 from pypitchfx.load.load_games import load_game
+from pypitchfx.utils.utils import get_gid_from_url
 from bs4 import BeautifulSoup
 import requests
 
