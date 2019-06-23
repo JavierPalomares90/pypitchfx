@@ -503,7 +503,6 @@ CREATE TABLE action(
     game_id VARCHAR(36) NOT NULL,
     inning_id VARCHAR(36) NOT NULL, 
     half_inning_id VARCHAR(36),
-    at_bat_id VARCHAR(36) NOT NULL,
     FOREIGN KEY (half_inning_id) REFERENCES half_inning(half_inning_id) ON DELETE CASCADE);
 """
 

@@ -282,7 +282,6 @@ def insert_action(conn,action):
     game_id = action.game_id
     inning_id = action.inning_id
     hf_id = action.half_inning_id
-    at_bat_id = action.at_bat_id
 
     a_id = str(action.uuid)
     b = action.b
