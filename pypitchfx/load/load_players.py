@@ -55,3 +55,6 @@ def insert_player(conn,player):
         gid=gid)
         .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
+
+def load_player(player,conn):
+    insert_player(conn,player)

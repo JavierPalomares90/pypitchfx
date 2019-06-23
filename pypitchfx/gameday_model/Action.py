@@ -18,3 +18,4 @@ class Action:
 
         self.half_inning_id = None
         self.inning_id = None
+        self.game_id = None

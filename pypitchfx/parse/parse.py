@@ -2,8 +2,8 @@
 # Author: Javier Palomares
 
 from pypitchfx.gameday_model import *
-from pypitchfx.load.load_players import insert_player
-from pypitchfx.load.load_games import insert_game
+from pypitchfx.load.load_players import load_player
+from pypitchfx.load.load_games import load_game
 import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup # required  pip3 install lxml
@@ -259,7 +259,7 @@ def parse_innings_all(innings_all,db_connection=None):
             game.url = url
             game.gid = gid
             if db_connection is not None:
-                insert_game(game)
+                load_game(game,db_connection)
             games.append(game)
         except Exception as e:
             print('unable to load game {}'.format(url))
@@ -335,7 +335,7 @@ def parse_players(players_urls,db_connection=None):
             for player_xml in players_xml:
                 p = parse_player(player_xml,gid)
                 if db_connection is not None:
-                    insert_player(db_connection,p)
+                    load_player(p,db_connection)
                 players.append(p)
         except Exception as e:
             print('unable to load player {}'.format(url))

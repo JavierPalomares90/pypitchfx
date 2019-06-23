@@ -1,6 +1,8 @@
 '''
-INSERT statements for populating the tables
+SQL statements for creating
+and populating the tables
 '''
+
 INSERT_PLAYERS = """
 INSERT INTO player(
     player_id,
@@ -8,7 +10,8 @@ INSERT INTO player(
 VALUES(
     '{player_id}',
     '{full_name}');
- """
+"""
+
 INSERT_GAME = """
 INSERT INTO game(
     game_id,
@@ -17,7 +20,8 @@ INSERT INTO game(
     hole,
     ind,
     innings_ids,
-    url) 
+    url,
+    gid) 
 VALUES(
     '{game_id}',
     '{at_bat}',
@@ -25,9 +29,11 @@ VALUES(
     '{hole}',
     '{ind}',
     ARRAY{innings_id},
-    '{url}'
+    '{url}',
+    '{gid}'
 );
- """
+"""
+
 INSERT_INNING = """
 INSERT INTO inning(
     inning_id,num,
@@ -47,16 +53,20 @@ VALUES(
     '{bottom_inning_id}',
     '{game_id}'
 );"""
+
 INSERT_HALF_INNING = """
 INSERT INTO half_inning(
     half_inning_id,
     at_bats_actions_ids,
-    inning_id) 
+    game_id,
+    inning_id)
 VALUES(
     '{half_inning_id}',
     ARRAY{at_bats_actions_id}::VARCHAR(36)[],
+    '{game_id}',
     '{inning_id}'
 );"""
+
 INSERT_ACTION="""
 INSERT INTO action(
     action_id,
@@ -71,7 +81,9 @@ INSERT INTO action(
     event_num,
     home_team_runs,
     away_team_runs,
-    half_inning_id) 
+    game_id,
+    inning_id,
+    half_inning_id)
 VALUES(
     '{action_id}',
     {b},
@@ -85,8 +97,11 @@ VALUES(
     {event_num},
     {home_team_runs},
     {away_team_runs},
+    '{game_id}',
+    '{inning_id}',
     '{half_inning_id}'
 );"""
+
 INSERT_AT_BAT="""
 INSERT INTO at_bat(
     at_bat_id,
@@ -108,8 +123,10 @@ INSERT INTO at_bat(
     score,
     pitch_ids,
     runner_ids,
+    game_id,
+    inning_id,
     half_inning_id,
-    outcome) 
+    outcome)
 VALUES(
     '{at_bat_id}',
     {num},
@@ -130,9 +147,12 @@ VALUES(
     {score},
     ARRAY{pitch_ids},
     ARRAY{runner_ids}::VARCHAR(36)[],
+    '{game_id}',
+    '{inning_id}',
     '{half_inning_id}',
     {outcome}
 );"""
+
 INSERT_PITCH="""INSERT INTO pitch(
     pitch_id,
     des,
@@ -171,6 +191,9 @@ INSERT_PITCH="""INSERT INTO pitch(
     spin_rate,
     cc,
     mt,
+    game_id,
+    inning_id,
+    half_inning_id,
     at_bat_id,
     outcome)
 VALUES(
@@ -211,9 +234,13 @@ VALUES(
     {spin_rate},
     '{cc}',
     '{mt}',
+    '{game_id}',
+    '{inning_id}',
+    '{half_inning_id}'
     '{at_bat_id}',
     {outcome}
 );"""
+
 INSERT_RUNNER="""
 INSERT INTO runner(
     runner_id,
@@ -224,7 +251,10 @@ INSERT INTO runner(
     score,
     rbi,
     earned,
-    at_bat_id) 
+    game_id,
+    inning_id,
+    half_inning_id,
+    at_bat_id)
 VALUES(
     '{runner_id}',
     '{id}',
@@ -234,18 +264,28 @@ VALUES(
     {score},
     {rbi},
     {earned},
+    '{game_id}',
+    '{inning_id}',
+    '{half_inning_id}',
     '{at_bat_id}'
 );"""
+
 INSERT_PICKOFF="""
 INSERT INTO pickoff(
     po_id,
     des,
     event_num,
-    at_bat_id) 
+    game_id,
+    inning_id,
+    half_inning_id,
+    at_bat_id)
 VALUES (
     '{po_id}',
     '{des}',
     {event_num},
+    '{game_id}',
+    '{inning_id}',
+    '{half_inning_id}',
     '{at_bat_id}'
 );"""
 
@@ -304,35 +344,35 @@ VALUES(
 CREATE_GAME_TABLE="""
 CREATE TABLE game(
     game_id VARCHAR(36) PRIMARY KEY,
-    atBat VARCHAR (6)  NOT NULL, 
+    atBat VARCHAR (6)  NOT NULL,
     deck VARCHAR (6) NOT NULL,
     hole VARCHAR (6),
-    ind TEXT, 
-    innings_ids VARCHAR(36)[] NOT NULL, 
-    url TEXT, 
-    gid TEXT); 
+    ind TEXT,
+    innings_ids VARCHAR(36)[] NOT NULL,
+    url TEXT,
+    gid TEXT);
 """
 
 CREATE_INNING_TABLE="""
 CREATE TABLE inning(
-    inning_id VARCHAR(36) PRIMARY KEY, 
-    num INTEGER NOT NULL, 
-    away_team VARCHAR(50) NOT NULL, 
+    inning_id VARCHAR(36) PRIMARY KEY,
+    num INTEGER NOT NULL,
+    away_team VARCHAR(50) NOT NULL,
     home_team VARCHAR(5) NOT NULL,
-    next BOOLEAN NOT NULL, 
+    next BOOLEAN NOT NULL,
     top_inning_id VARCHAR(36) NOT NULL,
-    bottom_inning_id VARCHAR(36), 
+    bottom_inning_id VARCHAR(36),
     game_id VARCHAR(36) NOT NULL,
-    FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE); 
+    FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE);
 """
 
 CREATE_HALF_INNING_TABLE="""
 CREATE TABLE half_inning(
-    half_inning_id VARCHAR(36) PRIMARY KEY, 
-    at_bats_actions_ids VARCHAR(36)[] NOT NULL, 
-    isTop BOOLEAN NOT NULL, 
+    half_inning_id VARCHAR(36) PRIMARY KEY,
+    at_bats_actions_ids VARCHAR(36)[] NOT NULL,
+    isTop BOOLEAN NOT NULL,
     game_id VARCHAR(36) NOT NULL,
-    inning_id VARCHAR(36) NOT NULL, 
+    inning_id VARCHAR(36) NOT NULL,
     FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE,
     FOREIGN KEY (inning_id) REFERENCES inning(inning_id) ON DELETE CASCADE);
 """
@@ -360,12 +400,12 @@ CREATE TABLE at_bat(
     outcome NUMERIC NOT NULL,
     s INTEGER,
     game_id VARCHAR(36) NOT NULL,
-    inning_id VARCHAR(36) NOT NULL, 
+    inning_id VARCHAR(36) NOT NULL,
     half_inning_id VARCHAR(36),
     FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE,
     FOREIGN KEY (inning_id) REFERENCES inning(inning_id) ON DELETE CASCADE,
     FOREIGN KEY (half_inning_id) REFERENCES half_inning(half_inning_id) ON DELETE CASCADE);
-    ); 
+    );
 """
 
 CREATE_PITCH_TABLE="""
@@ -503,7 +543,7 @@ CREATE TABLE game_player(
     losses INTEGER, 
     era NUMERIC, 
     gid TEXT 
-    PRIMARY KEY(id,gid) 
+    PRIMARY KEY(id,gid),
     FOREIGN KEY (gid) REFERENCES game(gid) ON DELETE CASCADE
 ); 
 """

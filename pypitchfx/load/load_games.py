@@ -19,13 +19,15 @@ def insert_game(conn,game):
         hole=hole,
         ind=ind,
         innings_id=innings_ids,
-        url=game.url)
+        url=game.url,
+        gid=game.gid)
         .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
 
 
-def insert_inning(conn,game_id,inning):
+def insert_inning(conn,inning):
     inning_id = str(inning.uuid)
+    game_id = inning.game_id
     num = int(inning.num)
     away_team = inning.away_team
     home_team = inning.home_team
@@ -46,20 +48,25 @@ def insert_inning(conn,game_id,inning):
         .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
 
-def insert_half_inning_helper(conn,hf,i,at_bats_and_actions_ids):
-    inning_id = str(i.uuid)
+def insert_half_inning_helper(conn,hf):
+    game_id = hf.game_id
+    inning_id = hf.inning_id
     hf_id = str(hf.uuid)
     at_bats_and_actions_ids = get_ids(hf.at_bats_and_actions)
     sql = text(INSERT_HALF_INNING.format(
         half_inning_id=hf_id,
         inning_id=inning_id,
+        game_id = game_id,
         at_bats_actions_id=at_bats_and_actions_ids)
         .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
-    
 
-def insert_pitch(conn,ab_id,pitch):
+def insert_pitch(conn,pitch):
     pitch_id = str(pitch.uuid)
+    game_id = pitch.game_id
+    inning_id = pitch.inning_id
+    hf_id = pitch.half_inning_id
+
     des = pitch.des
     des = des.replace("'","''")
     id_ = pitch.id
@@ -138,14 +145,21 @@ def insert_pitch(conn,ab_id,pitch):
         spin_rate = spin_rate,
         cc = cc,
         mt = mt,
+        game_id = game_id,
+        inning_id = inning_id,
+        half_inning_id = hf_id,
         at_bat_id = ab_id,
         outcome = outcome
     ).replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
 
 
-def insert_runner(conn,ab_id,runner):
+def insert_runner(conn,runner):
     runner_id = str(runner.uuid)
+    game_id = runner.game_id
+    inning_id = runner.inning_id
+    hf_id = runner.half_inning_id
+    ab_id = runner.at_bat_id
     id_ = runner.id
     score = get_boolean_from_TF(runner.score)
     start = runner_base_to_int(runner.start)
@@ -164,12 +178,19 @@ def insert_runner(conn,ab_id,runner):
         score=score,
         rbi=rbi,
         earned=earned,
-        at_bat_id=ab_id)
+        game_id = game_id,
+        inning_id = inning_id,
+        half_inning_id = hf_id,
+        at_bat_id = ab_id)
         .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
 
-def insert_pickoff(conn,ab_id,pickoff):
+def insert_pickoff(conn,pickoff):
     po_id =  str(pickoff.uuid)
+    ab_id = pickoff.at_bat_id
+    hf_id = pickoff.half_inning_id
+    inning_id = pickoff.inning_id
+    game_id = pickoff.game_id
     des = pickoff.des
     des = des.replace("'","''")
     event_num = pickoff.event_num
@@ -177,12 +198,19 @@ def insert_pickoff(conn,ab_id,pickoff):
         po_id=po_id,
         des=des,
         event_num=event_num,
-        at_bat_id=ab_id)
+        game_id = game_id,
+        inning_id = inning_id,
+        half_inning_id=hf_id,
+        at_bat_id = ab_id)
         .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
 
-def insert_at_bat(conn,hf_id,ab):
+def insert_at_bat(conn,ab):
     ab_id = str(ab.uuid)
+    game_id = ab.game_id
+    inning_id = ab.inning_id
+    hf_id = ab.half_inning_id
+
     num = int(ab.num)
     b = int(ab.balls)
     s = int(ab.strikes)
@@ -223,21 +251,28 @@ def insert_at_bat(conn,hf_id,ab):
         pitch_ids=pitch_ids,
         runner_ids=runner_ids,
         half_inning_id=hf_id,
+        game_id = game_id,
+        inning_id = inning_id,
         outcome=outcome,
         stands=stands)
         .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
     for pitch in ab.pitches:
         if isinstance(pitch,Pitch):
-            insert_pitch(conn,ab_id,pitch)
+            insert_pitch(conn,pitch)
         elif isinstance(pitch,Pickoff):
-            insert_pickoff(conn,ab_id,pitch)
+            insert_pickoff(conn,pitch)
         else:
             raise("Invalid pitch "+ pitch)
     for runner in ab.runners:
-        insert_runner(conn,ab_id,runner)
+        insert_runner(conn,runner)
 
-def insert_action(conn,hf_id,action):
+def insert_action(conn,action):
+    game_id = action.game_id
+    inning_id = action.inning_id
+    hf_id = action.half_inning_id
+    at_bat_id = action.at_bat_id
+
     a_id = str(action.uuid)
     b = action.b
     s = action.s
@@ -264,25 +299,28 @@ def insert_action(conn,hf_id,action):
         event_num=event_num,
         home_team_runs=home_team_runs,
         away_team_runs=away_team_runs,
-        half_inning_id=hf_id)
+        half_inning_id=hf_id,
+        game_id = game_id,
+        inning_id = inning_id,
+        at_bat_id = at_bat_id)
         .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
 
 def insert_half_inning(conn,hf,i):
-    at_bats_and_actions_ids = get_ids(hf.at_bats_and_actions)
-    insert_half_inning_helper(conn,hf,i,at_bats_and_actions_ids)
+    insert_half_inning_helper(conn,hf)
+    game_id = hf.game_id
+    inning_id = hf.inning_id
     hf_id = str(hf.uuid)
     for a in hf.at_bats_and_actions:
         if isinstance(a,AtBat):
-            insert_at_bat(conn,hf_id,a)
+            insert_at_bat(conn,a)
         elif isinstance(a,Action):
-            insert_action(conn,hf_id,a)
+            insert_action(conn,a)
 
 def insert_innings(conn,game):
-    game_id = str(game.uuid)
     innings = game.innings
     for i in innings:
-        insert_inning(conn,game_id,i)
+        insert_inning(conn,i)
         insert_half_inning(conn,i.top,i)
         if(i.bottom is not None):
             insert_half_inning(conn,i.bottom,i)
