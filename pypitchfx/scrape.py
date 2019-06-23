@@ -7,8 +7,8 @@ from pypitchfx.gameday_model.Inning import Inning
 from pypitchfx.gameday_model.Pickoff import Pickoff 
 from pypitchfx.gameday_model.Pitch import Pitch
 from pypitchfx.gameday_model.Runner import Runner 
-from pypitchfx.parse.parse import *
-from pypitchfx.utils.utils import *
+from pypitchfx.parse.parse import parse_players,parse_innings_all 
+from pypitchfx.utils.utils import makeUrls,get_innings_all_urls,get_players_urls,get_args
 from pypitchfx.load.create_tables import create_tables
 
 '''
