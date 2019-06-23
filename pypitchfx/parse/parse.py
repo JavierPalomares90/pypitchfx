@@ -36,12 +36,13 @@ def parse_top_bottom_half_innings(half_innings,game_id,inning_id):
 
 def parse_scoreboard_xml(scoreboard_xml):
     game_ids = []
-    go_games = scoreboard_xml.find_all('go_game')
-    for game in go_games:
-        game_xml = game.find_all('game')[0]
-        attrs = dict(game_xml.attrs)
-        game_id = attrs['id']
-        game_ids.append(game_id)
+    if scoreboard_xml is not None:
+        go_games = scoreboard_xml.find_all('go_game')
+        for game in go_games:
+            game_xml = game.find_all('game')[0]
+            attrs = dict(game_xml.attrs)
+            game_id = attrs['id']
+            game_ids.append(game_id)
     return game_ids
 
 def parse_pitch(pitch_xml,game_id,inning_id,half_inning_id,at_bat_id):
