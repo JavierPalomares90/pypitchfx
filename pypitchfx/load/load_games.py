@@ -60,11 +60,13 @@ def insert_half_inning_helper(conn,hf):
     game_id = hf.game_id
     inning_id = hf.inning_id
     hf_id = str(hf.uuid)
+    isTop = hf.isTop
     at_bats_and_actions_ids = get_ids(hf.at_bats_and_actions)
     sql = text(INSERT_HALF_INNING.format(
         half_inning_id=hf_id,
         inning_id=inning_id,
         game_id = game_id,
+        isTop = isTop,
         at_bats_actions_id=at_bats_and_actions_ids)
         .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
@@ -74,6 +76,7 @@ def insert_pitch(conn,pitch):
     game_id = pitch.game_id
     inning_id = pitch.inning_id
     hf_id = pitch.half_inning_id
+    ab_id = pitch.at_bat_id
 
     des = pitch.des
     des = des.replace("'","''")

@@ -58,6 +58,7 @@ INSERT_HALF_INNING = """
 INSERT INTO half_inning(
     half_inning_id,
     at_bats_actions_ids,
+    isTop,
     game_id,
     inning_id)
 VALUES(
