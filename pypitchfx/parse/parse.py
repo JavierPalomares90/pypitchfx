@@ -4,9 +4,7 @@
 from pypitchfx.gameday_model import *
 from pypitchfx.load.load_players import load_player
 from pypitchfx.load.load_games import load_game
-import numpy as np
-import pandas as pd
-from bs4 import BeautifulSoup # required  pip3 install lxml
+from bs4 import BeautifulSoup
 import requests
 
 def parse_game(game_xml):
