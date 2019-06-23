@@ -300,7 +300,7 @@ VALUES(
     '{gid}'
 );
 """
-#TODO: Finish impls
+
 CREATE_GAME_TABLE="""
 CREATE TABLE game(
     game_id VARCHAR(36) PRIMARY KEY,
@@ -415,25 +415,96 @@ CREATE TABLE pitch(
     at_bat_id VARCHAR(36) NOT NULL,
     FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE,
     FOREIGN KEY (inning_id) REFERENCES inning(inning_id) ON DELETE CASCADE,
-    FOREIGN KEY (half_inning_id) REFERENCES half_inning(half_inning_id) ON DELETE CASCADE);
+    FOREIGN KEY (half_inning_id) REFERENCES half_inning(half_inning_id) ON DELETE CASCADE,
     FOREIGN KEY (at_bat_id) REFERENCES at_bat(at_bat_id) ON DELETE CASCADE);
 """
 
 CREATE_RUNNER_TABLE="""
+CREATE TABLE runner( 
+    runner_id VARCHAR(36) PRIMARY KEY, 
+    id VARCHAR(6) NOT NULL, 
+    start INTEGER NOT NULL, 
+    end INTEGER , 
+    event TEXT, 
+    score BOOLEAN, 
+    rbi BOOLEAN, 
+    earned BOOLEAN, 
+    game_id VARCHAR(36) NOT NULL,
+    inning_id VARCHAR(36) NOT NULL, 
+    half_inning_id VARCHAR(36),
+    at_bat_id VARCHAR(36) NOT NULL,
+    FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE,
+    FOREIGN KEY (inning_id) REFERENCES inning(inning_id) ON DELETE CASCADE,
+    FOREIGN KEY (half_inning_id) REFERENCES half_inning(half_inning_id) ON DELETE CASCADE,
+    FOREIGN KEY (at_bat_id) REFERENCES at_bat(at_bat_id) ON DELETE CASCADE);
 """
 
 CREATE_PICKOFF_TABLE="""
-"""
-
-CREATE_RUNNER_TABLE="""
-"""
-
-CREATE_PICKOFF_TABLE="""
+CREATE TABLE pickoff(
+    po_id VARCHAR(36) PRIMARY KEY,
+    des TEXT,
+    event_num INTEGER,
+    game_id VARCHAR(36) NOT NULL,
+    inning_id VARCHAR(36) NOT NULL, 
+    half_inning_id VARCHAR(36),
+    at_bat_id VARCHAR(36) NOT NULL,
+    FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE,
+    FOREIGN KEY (inning_id) REFERENCES inning(inning_id) ON DELETE CASCADE,
+    FOREIGN KEY (half_inning_id) REFERENCES half_inning(half_inning_id) ON DELETE CASCADE,
+    FOREIGN KEY (at_bat_id) REFERENCES at_bat(at_bat_id) ON DELETE CASCADE);
 """
 
 CREATE_ACTION_TABLE="""
+CREATE TABLE action( 
+    action_id VARCHAR(36) PRIMARY KEY, 
+    b INTEGER, 
+    s INTEGER, 
+    o INTEGER, 
+    des TEXT, 
+    event TEXT, 
+    tfs_zulu TIMESTAMP, 
+    player VARCHAR(6), 
+    pitch INTEGER, 
+    event_num INTEGER, 
+    home_team_runs INTEGER, 
+    away_team_runs INTEGER, 
+    game_id VARCHAR(36) NOT NULL,
+    inning_id VARCHAR(36) NOT NULL, 
+    half_inning_id VARCHAR(36),
+    at_bat_id VARCHAR(36) NOT NULL,
+    FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE,
+    FOREIGN KEY (inning_id) REFERENCES inning(inning_id) ON DELETE CASCADE,
+    FOREIGN KEY (half_inning_id) REFERENCES half_inning(half_inning_id) ON DELETE CASCADE,
+    FOREIGN KEY (at_bat_id) REFERENCES at_bat(at_bat_id) ON DELETE CASCADE);
 """
 
 CREATE_GAME_PLAYER_TABLE="""
+CREATE TABLE game_player( 
+    id VARCHAR(36), 
+    first TEXT, 
+    last TEXT, 
+    num INTEGER, 
+    boxname TEXT, 
+    rl TEXT, 
+    bats TEXT, 
+    position TEXT, 
+    status TEXT, 
+    team_abbrev TEXT, 
+    team_id TEXT, 
+    parent_team_abbrev TEXT, 
+    parent_team_id TEXT, 
+    avg NUMERIC, 
+    hr INTEGER, 
+    rbi INTEGER, 
+    current_position TEXT, 
+    bat_order INTEGER, 
+    game_position TEXT, 
+    wins INTEGER, 
+    losses INTEGER, 
+    era NUMERIC, 
+    gid TEXT 
+    PRIMARY KEY(id,gid) 
+    FOREIGN KEY (gid) REFERENCES game(gid) ON DELETE CASCADE
+); 
 """
 
