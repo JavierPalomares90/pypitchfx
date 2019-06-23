@@ -14,7 +14,7 @@ Author: Javier Palomares
 def scrape_games_players(start=None,end=None,game_ids=None,engine=None):
     if game_ids is None:
         if start is None or end is None:
-            raise('Specify the start and end dates, or give the game ids')
+            raise Exception('Specify the start and end dates, or give the game ids')
     game_urls = makeUrls(start,end,game_ids)
     for url in game_urls:
         print(url)

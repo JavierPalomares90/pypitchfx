@@ -5,7 +5,6 @@ import argparse
 from datetime import datetime,timedelta, date
 from bs4 import BeautifulSoup # required  pip3 install lxml
 import requests
-from pypitchfx.parse.parse import parse_scoreboard_xml
 import re
 
 _GAMEDAY_ROOT = "http://gd2.mlb.com/components/game/mlb"
@@ -33,6 +32,7 @@ def get_gids_for_day(day_date):
     contents = resp.content
     soup = BeautifulSoup(contents,'xml')
     scoreboard_xml = soup.find('scoreboard')
+    from pypitchfx.parse.parse import parse_scoreboard_xml
     return parse_scoreboard_xml(scoreboard_xml)
 
 # returns the days between the start and end date, inclusive
