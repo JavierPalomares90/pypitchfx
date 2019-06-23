@@ -1,4 +1,4 @@
-from pypitchfx.load.Queries import *
+from pypitchfx.load.queries import *
 from pypitchfx.gameday_model import *
 from pypitchfx.utils.utils import *
 from sqlalchemy.sql import text
