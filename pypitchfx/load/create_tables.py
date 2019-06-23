@@ -43,10 +43,10 @@ def create_game_tables(conn):
     create_action_table(conn)
 
 def create_tables(conn,table_names):
-    if 'game_player' not in table_names:
-        create_game_player_table(conn)
     if 'game' not in table_names:
         create_game_table(conn)
+    if 'game_player' not in table_names:
+        create_game_player_table(conn)
     if 'inning' not in table_names:
         create_inning_table(conn)
     if 'half_inning' not in table_names:

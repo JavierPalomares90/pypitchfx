@@ -350,7 +350,7 @@ CREATE TABLE game(
     ind TEXT,
     innings_ids VARCHAR(36)[] NOT NULL,
     url TEXT,
-    gid TEXT);
+    gid TEXT UNIQUE);
 """
 
 CREATE_INNING_TABLE="""
@@ -542,7 +542,7 @@ CREATE TABLE game_player(
     wins INTEGER, 
     losses INTEGER, 
     era NUMERIC, 
-    gid TEXT 
+    gid TEXT,
     PRIMARY KEY(id,gid),
     FOREIGN KEY (gid) REFERENCES game(gid) ON DELETE CASCADE
 ); 

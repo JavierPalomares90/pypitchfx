@@ -30,7 +30,7 @@ def scrape_games_players(start=None,end=None,game_ids=None,engine=None):
 
     if engine is not None:
         table_names = engine.table_names()
-        db_connection = engine.connec()
+        db_connection = engine.connect()
         create_tables(db_connection,table_names)
 
     innings_all_urls = get_innings_all_urls(game_urls)
