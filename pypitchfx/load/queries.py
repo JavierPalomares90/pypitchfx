@@ -373,7 +373,6 @@ CREATE TABLE half_inning(
     isTop BOOLEAN NOT NULL,
     game_id VARCHAR(36) NOT NULL,
     inning_id VARCHAR(36) NOT NULL,
-    FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE,
     FOREIGN KEY (inning_id) REFERENCES inning(inning_id) ON DELETE CASCADE);
 """
 
@@ -402,9 +401,7 @@ CREATE TABLE at_bat(
     game_id VARCHAR(36) NOT NULL,
     inning_id VARCHAR(36) NOT NULL,
     half_inning_id VARCHAR(36),
-    FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE,
-    FOREIGN KEY (inning_id) REFERENCES inning(inning_id) ON DELETE CASCADE,
-    FOREIGN KEY (half_inning_id) REFERENCES half_inning(half_inning_id) ON DELETE CASCADE);
+    FOREIGN KEY (half_inning_id) REFERENCES half_inning(half_inning_id) ON DELETE CASCADE
     );
 """
 
@@ -453,9 +450,6 @@ CREATE TABLE pitch(
     inning_id VARCHAR(36) NOT NULL, 
     half_inning_id VARCHAR(36),
     at_bat_id VARCHAR(36) NOT NULL,
-    FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE,
-    FOREIGN KEY (inning_id) REFERENCES inning(inning_id) ON DELETE CASCADE,
-    FOREIGN KEY (half_inning_id) REFERENCES half_inning(half_inning_id) ON DELETE CASCADE,
     FOREIGN KEY (at_bat_id) REFERENCES at_bat(at_bat_id) ON DELETE CASCADE);
 """
 
@@ -463,8 +457,8 @@ CREATE_RUNNER_TABLE="""
 CREATE TABLE runner( 
     runner_id VARCHAR(36) PRIMARY KEY, 
     id VARCHAR(6) NOT NULL, 
-    start INTEGER NOT NULL, 
-    end INTEGER , 
+    start_base INTEGER NOT NULL, 
+    end_base INTEGER, 
     event TEXT, 
     score BOOLEAN, 
     rbi BOOLEAN, 
@@ -473,9 +467,6 @@ CREATE TABLE runner(
     inning_id VARCHAR(36) NOT NULL, 
     half_inning_id VARCHAR(36),
     at_bat_id VARCHAR(36) NOT NULL,
-    FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE,
-    FOREIGN KEY (inning_id) REFERENCES inning(inning_id) ON DELETE CASCADE,
-    FOREIGN KEY (half_inning_id) REFERENCES half_inning(half_inning_id) ON DELETE CASCADE,
     FOREIGN KEY (at_bat_id) REFERENCES at_bat(at_bat_id) ON DELETE CASCADE);
 """
 
@@ -488,9 +479,6 @@ CREATE TABLE pickoff(
     inning_id VARCHAR(36) NOT NULL, 
     half_inning_id VARCHAR(36),
     at_bat_id VARCHAR(36) NOT NULL,
-    FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE,
-    FOREIGN KEY (inning_id) REFERENCES inning(inning_id) ON DELETE CASCADE,
-    FOREIGN KEY (half_inning_id) REFERENCES half_inning(half_inning_id) ON DELETE CASCADE,
     FOREIGN KEY (at_bat_id) REFERENCES at_bat(at_bat_id) ON DELETE CASCADE);
 """
 
@@ -512,10 +500,7 @@ CREATE TABLE action(
     inning_id VARCHAR(36) NOT NULL, 
     half_inning_id VARCHAR(36),
     at_bat_id VARCHAR(36) NOT NULL,
-    FOREIGN KEY (game_id) REFERENCES game(game_id) ON DELETE CASCADE,
-    FOREIGN KEY (inning_id) REFERENCES inning(inning_id) ON DELETE CASCADE,
     FOREIGN KEY (half_inning_id) REFERENCES half_inning(half_inning_id) ON DELETE CASCADE,
-    FOREIGN KEY (at_bat_id) REFERENCES at_bat(at_bat_id) ON DELETE CASCADE);
 """
 
 CREATE_GAME_PLAYER_TABLE="""
