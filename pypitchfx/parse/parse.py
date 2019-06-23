@@ -20,11 +20,11 @@ def parse_game(game_xml):
 
 def add_half_innings(inning,half_innings):
     top = half_innings[0]
-    top_inning = parse_half_inning(top)
+    top_inning = parse_half_inning(top,True)
     inning.top = top_inning
     if(len(half_innings) > 1):
         bottom = half_innings[1]
-        bottom_inning = parse_half_inning(bottom)
+        bottom_inning = parse_half_inning(bottom,False)
         inning.bottom = bottom_inning
     return inning
 
@@ -178,7 +178,7 @@ def parse_action(x):
     action = Action(b,s,o,des,event,tfs,tfs_zulu,player,pitch,event_num,home_team_runs,away_team_runs)
     return action
 
-def parse_half_inning(half):
+def parse_half_inning(half, isTop):
     abs_and_actions_xml = list(half.children)
     at_bats_and_actions = []
     for x in abs_and_actions_xml:
@@ -192,6 +192,8 @@ def parse_half_inning(half):
             raise('Invalid xml child' + x)
     h = HalfInning()
     h.at_bats_and_actions = at_bats_and_actions
+    # whether the inning is top or bottom half inning
+    h.isTop = isTop
     return h
 
 def parse_inning(inning):

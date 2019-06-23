@@ -45,4 +45,9 @@ class Pitch:
         self.cc = cc
         self.mt = mt
 
+        self.at_bat_id = None
+        self.half_inning_id = None
+        self.inning_id = None
+        self.game_id = None
+
 

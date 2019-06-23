@@ -24,3 +24,7 @@ class AtBat:
         self.away_team_runs = away_team_runs
         self.pitches = None
         self.runners = None
+
+        self.half_inning_id = None
+        self.inning_id = None
+        self.game_id = None

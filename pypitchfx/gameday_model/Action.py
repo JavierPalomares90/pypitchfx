@@ -15,3 +15,6 @@ class Action:
         self.event_num = event_num
         self.home_team_runs = home_team_runs
         self.away_team_runs = away_team_runs
+
+        self.half_inning_id = None
+        self.inning_id = None

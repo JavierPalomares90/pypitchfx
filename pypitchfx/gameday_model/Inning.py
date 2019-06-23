@@ -10,3 +10,4 @@ class Inning:
         # top and bottom half innings
         self.top = None
         self.bottom = None
+        self.game_id = None

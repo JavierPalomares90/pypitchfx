@@ -1,4 +1,5 @@
 from sqlalchemy.sql import text
+from pypitchfx.load.queries import *
 
 def create_game_table(conn):
     pass
@@ -25,7 +26,7 @@ def create_action_table(conn):
     pass
 
 def create_game_player_table(conn):
-     pass
+    pass
 
 def create_tables(conn):
     create_game_table(conn)
