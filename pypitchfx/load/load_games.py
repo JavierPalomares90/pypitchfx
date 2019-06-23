@@ -311,8 +311,7 @@ def insert_action(conn,action):
         away_team_runs=away_team_runs,
         half_inning_id=hf_id,
         game_id = game_id,
-        inning_id = inning_id,
-        at_bat_id = at_bat_id)
+        inning_id = inning_id)
         .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
 
