@@ -12,7 +12,15 @@ def insert_game(conn,game):
     ind = game.ind 
     innings = game.innings
     innings_ids = get_ids(innings)
-    sql = text(INSERT_GAME.format(game_id=game_id,at_bat = at_bat,deck =deck,hole=hole,ind=ind,innings_id=innings_ids,url=game.url).replace("'None'",'None').replace('None','NULL'))
+    sql = text(INSERT_GAME.format(
+        game_id=game_id,
+        at_bat = at_bat,
+        deck =deck,
+        hole=hole,
+        ind=ind,
+        innings_id=innings_ids,
+        url=game.url)
+        .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
 
 
@@ -26,14 +34,27 @@ def insert_inning(conn,game_id,inning):
     bot_id = None
     if inning.bottom is not None:
         bot_id = str(inning.bottom.uuid)
-    sql = text(INSERT_INNING.format(inning_id=inning_id,num=num,away_team=away_team,home_team=home_team,top_inning_id = top_id, bottom_inning_id = bot_id,game_id=game_id,next=nxt).replace("'None'",'None').replace('None','NULL'))
+    sql = text(INSERT_INNING.format(
+        inning_id=inning_id,
+        num=num,
+        away_team=away_team,
+        home_team=home_team,
+        top_inning_id = top_id,
+        bottom_inning_id = bot_id,
+        game_id=game_id,
+        next=nxt)
+        .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
 
 def insert_half_inning_helper(conn,hf,i,at_bats_and_actions_ids):
     inning_id = str(i.uuid)
     hf_id = str(hf.uuid)
     at_bats_and_actions_ids = get_ids(hf.at_bats_and_actions)
-    sql = text(INSERT_HALF_INNING.format(half_inning_id=hf_id,inning_id=inning_id,at_bats_actions_id=at_bats_and_actions_ids).replace("'None'",'None').replace('None','NULL'))
+    sql = text(INSERT_HALF_INNING.format(
+        half_inning_id=hf_id,
+        inning_id=inning_id,
+        at_bats_actions_id=at_bats_and_actions_ids)
+        .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
     
 
@@ -134,7 +155,17 @@ def insert_runner(conn,ab_id,runner):
         end = 4
     rbi = get_boolean_from_TF(runner.rbi)
     earned = get_boolean_from_TF(runner.earned)
-    sql = text(INSERT_RUNNER.format(runner_id=runner_id,id=id_,start=start,end=end,event=event,score=score,rbi=rbi,earned=earned,at_bat_id=ab_id).replace("'None'",'None').replace('None','NULL'))
+    sql = text(INSERT_RUNNER.format(
+        runner_id=runner_id,
+        id=id_,
+        start=start,
+        end=end,
+        event=event,
+        score=score,
+        rbi=rbi,
+        earned=earned,
+        at_bat_id=ab_id)
+        .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
 
 def insert_pickoff(conn,ab_id,pickoff):
@@ -142,7 +173,12 @@ def insert_pickoff(conn,ab_id,pickoff):
     des = pickoff.des
     des = des.replace("'","''")
     event_num = pickoff.event_num
-    sql = text(INSERT_PICKOFF.format(po_id=po_id,des=des,event_num=event_num,at_bat_id=ab_id).replace("'None'",'None').replace('None','NULL'))
+    sql = text(INSERT_PICKOFF.format(
+        po_id=po_id,
+        des=des,
+        event_num=event_num,
+        at_bat_id=ab_id)
+        .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
 
 def insert_at_bat(conn,hf_id,ab):
@@ -168,7 +204,28 @@ def insert_at_bat(conn,hf_id,ab):
     runner_ids = get_ids(ab.runners)
     score = get_boolean_from_TF(ab.score)
     outcome = get_at_bat_outcome(ab)
-    sql = text(INSERT_AT_BAT.format(at_bat_id=ab_id,num=num,b=b,s=s,o=0,start_tfs_zulu=start,batter=batter,b_height=b_height,pitcher=pitcher,p_throws=p_throws,des=des,event_num=event_num,event=event,home_team_runs=home_team_runs,away_team_runs=away_team_runs,score=score,pitch_ids=pitch_ids,runner_ids=runner_ids,half_inning_id=hf_id,outcome=outcome,stands=stands).replace("'None'",'None').replace('None','NULL'))
+    sql = text(INSERT_AT_BAT.format(
+        at_bat_id=ab_id,
+        num=num,b=b,
+        s=s,
+        o=0,
+        start_tfs_zulu=start,
+        batter=batter,
+        b_height=b_height,
+        pitcher=pitcher,
+        p_throws=p_throws,
+        des=des,
+        event_num=event_num,
+        event=event,
+        home_team_runs=home_team_runs,
+        away_team_runs=away_team_runs,
+        score=score,
+        pitch_ids=pitch_ids,
+        runner_ids=runner_ids,
+        half_inning_id=hf_id,
+        outcome=outcome,
+        stands=stands)
+        .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
     for pitch in ab.pitches:
         if isinstance(pitch,Pitch):
@@ -194,7 +251,21 @@ def insert_action(conn,hf_id,action):
     event_num = action.event_num
     home_team_runs = action.home_team_runs
     away_team_runs = action.away_team_runs
-    sql = text(INSERT_ACTION.format(action_id=a_id,b=b,s=s,o=o,des=des,event=event,tfs_zulu=tfs_zulu,player=player,pitch=pitch,event_num=event_num,home_team_runs=home_team_runs,away_team_runs=away_team_runs,half_inning_id=hf_id).replace("'None'",'None').replace('None','NULL'))
+    sql = text(INSERT_ACTION.format(
+        action_id=a_id,
+        b=b,
+        s=s,
+        o=o,
+        des=des,
+        event=event,
+        tfs_zulu=tfs_zulu,
+        player=player,
+        pitch=pitch,
+        event_num=event_num,
+        home_team_runs=home_team_runs,
+        away_team_runs=away_team_runs,
+        half_inning_id=hf_id)
+        .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)
 
 def insert_half_inning(conn,hf,i):
