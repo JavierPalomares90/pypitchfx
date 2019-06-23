@@ -18,15 +18,14 @@ def parse_game(game_xml):
     game = Game(atBat,deck,hole,ind)
     return game
 
-def add_half_innings(inning,half_innings):
+def parse_top_bottom_half_innings(half_innings,game_id,inning_id):
     top = half_innings[0]
-    top_inning = parse_half_inning(top,True)
-    inning.top = top_inning
+    top_inning = parse_half_inning(top,True,game_id,inning_id)
+    bottom_inning = None
     if(len(half_innings) > 1):
         bottom = half_innings[1]
-        bottom_inning = parse_half_inning(bottom,False)
-        inning.bottom = bottom_inning
-    return inning
+        bottom_inning = parse_half_inning(bottom,False,game_id,inning_id)
+    return top_inning,bottom_inning
 
 def parse_scoreboard_xml(scoreboard_xml):
     game_ids = []
@@ -38,7 +37,7 @@ def parse_scoreboard_xml(scoreboard_xml):
         game_ids.append(game_id)
     return game_ids
 
-def parse_pitch(pitch_xml):
+def parse_pitch(pitch_xml,game_id,inning_id,half_inning_id,at_bat_id):
     pitch_attrs = dict(pitch_xml.attrs)
     des = pitch_attrs.get('des')
     id_var = pitch_attrs.get('id')
@@ -83,9 +82,14 @@ def parse_pitch(pitch_xml):
     play_guid,start_speed,end_speed,sz_top,sz_bot,pfx_x,pfx_z,
     px,pz,x0,y0,z0,vx0,vy0,vz0,ax,ay,az,break_y,break_angle,break_length,
     pitch_type,type_conf,zone,nasty,spin_dir,spin_rate,cc,mt)
+
+    pitch.game_id = game_id
+    pitch.inning_id = inning_id
+    pitch.half_inning_id = half_inning_id
+    pitch.at_bat_id = at_bat_id
     return pitch
 
-def parse_runner(r):
+def parse_runner(r,game_id,inning_id,half_inning_id,at_bat_id):
     runner_attributes = dict(r.attrs)
     id_var = runner_attributes['id']
     start = runner_attributes['start']
@@ -97,16 +101,24 @@ def parse_runner(r):
     rbi = runner_attributes.get('rbi','F')
     earned = runner_attributes.get('earned','F')
     runner = Runner(id_var,start,end,event,event_num,score,rbi,earned)
+    runner.game_id = game_id
+    runner.inning_id = inning_id
+    runner.half_inning_id = half_inning_id
+    runner.at_bat_id = at_bat_id
     return runner
 
-def parse_pickoff(po):
+def parse_pickoff(po,game_id,inning_id,half_inning_id,at_bat_id):
     po_attributes = dict(po.attrs)
     des = po_attributes['des']
     event_num = po_attributes['event_num']
     pickoff = Pickoff(des,event_num)
+    pickoff.game_id = game_id
+    pickoff.inning_id = inning_id
+    pickoff.half_inning_id = half_inning_id
+    pickoff.at_bat_id = at_bat_id
     return pickoff
 
-def parse_at_bat(ab):
+def parse_at_bat(ab,game_id,inning_id,half_inning_id):
     ab_attributes = dict(ab.attrs)
     num = ab_attributes['num']
     b = ab_attributes['b']
@@ -139,19 +151,25 @@ def parse_at_bat(ab):
 
     at_bat = AtBat(num,b,s,o,start_tfs,start_tfs_zulu,batter,
         stand,b_height,pitcher,p_throws,des,event_num,event,home_team_runs,away_team_runs,score)
+
+    at_bat.game_id=game_id
+    at_bat.inning_id=inning_id
+    at_bat.half_inning_id=half_inning_id
+    at_bat_id = str(at_bat.uuid)
+
     # get the pitches and runners during the atbat
     pitches_runners_xml = list(ab.children)
     pitches = []
     runners = []
     for x in pitches_runners_xml:
         if x.name == 'pitch':
-            pitch = parse_pitch(x)
+            pitch = parse_pitch(x,game_id,inning_id,half_inning_id,at_bat_id)
             pitches.append(pitch)
         elif x.name == 'runner':
-            runner = parse_runner(x)
+            runner = parse_runner(x,game_id,inning_id,half_inning_id,at_bat_id)
             runners.append(runner)
         elif x.name == 'po':
-            pickoff = parse_pickoff(x)
+            pickoff = parse_pickoff(x,game_id,inning_id,half_inning_id,at_bat_id)
             # Add the pickoff to the list of pitches
             pitches.append(pickoff)
         else:
@@ -161,7 +179,7 @@ def parse_at_bat(ab):
 
     return at_bat
 
-def parse_action(x):
+def parse_action(x,game_id,inning_id,half_inning_id):
     action_attributes = dict(x.attrs)
     b = action_attributes['b']
     s = action_attributes['s']
@@ -176,27 +194,33 @@ def parse_action(x):
     home_team_runs = action_attributes['home_team_runs']
     away_team_runs = action_attributes['away_team_runs']
     action = Action(b,s,o,des,event,tfs,tfs_zulu,player,pitch,event_num,home_team_runs,away_team_runs)
+    action.game_id = game_id
+    action.inning_id = inning_id
+    action.half_inning_id = half_inning_id
     return action
 
-def parse_half_inning(half, isTop):
+def parse_half_inning(half, isTop,game_id,inning_id):
     abs_and_actions_xml = list(half.children)
     at_bats_and_actions = []
+    h = HalfInning()
+    half_inning_id = str(h.uuid)
+    h.game_id = game_id
+    h.inning_id = inning_id
     for x in abs_and_actions_xml:
         if x.name == 'atbat':
-            at_bat = parse_at_bat(x)
+            at_bat = parse_at_bat(x,game_id,inning_id,half_inning_id)
             at_bats_and_actions.append(at_bat)
         elif x.name =='action':
-            action = parse_action(x)
+            action = parse_action(x,game_id,inning_id,half_inning_id)
             at_bats_and_actions.append(action)
         else:
             raise('Invalid xml child' + x)
-    h = HalfInning()
     h.at_bats_and_actions = at_bats_and_actions
     # whether the inning is top or bottom half inning
     h.isTop = isTop
     return h
 
-def parse_inning(inning):
+def parse_inning(inning,game_id):
     innings_attr = dict(inning.attrs)
     num = innings_attr["num"]
     away_team = innings_attr["away_team"]
@@ -205,7 +229,11 @@ def parse_inning(inning):
     nxt = innings_attr["next"]
     half_innings = list(inning.children)
     i = Inning(num,away_team,home_team,nxt)
-    i = add_half_innings(i,half_innings)
+    inning_id = str(i.uuid)
+    i.game_id = game_id
+    top,bottom = parse_top_bottom_half_innings(half_innings,game_id,inning_id)
+    i.top = top
+    i.bottom = bottom
     return i
 
 
@@ -221,10 +249,12 @@ def parse_innings_all(innings_all,db_connection=None):
             soup = BeautifulSoup(contents,'xml')
             game_xml = soup.find('game')
             game = parse_game(game_xml)
+            game_id = str(game.uuid)
             innings_xml = soup.find_all('inning')
             innings = []
-            for inni in innings_xml:
-                innings.append(parse_inning(inni))
+            for inning_xml in innings_xml:
+                inning = parse_inning(inning_xml,game_id)
+                innings.append(inning)
             game.innings = innings
             game.url = url
             game.gid = gid

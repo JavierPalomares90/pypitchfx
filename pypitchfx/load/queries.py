@@ -249,7 +249,6 @@ VALUES (
     '{at_bat_id}'
 );"""
 
-#TODO: Finish impl
 INSERT_GAMEPLAYER="""
 INSERT INTO game_player(
 id,
@@ -303,3 +302,37 @@ VALUES
 '{gid}'
 );
 """
+#TODO: Finish impls
+CREATE_GAME_TABLE="""
+"""
+
+CREATE_INNING_TABLE="""
+"""
+
+CREATE_HALF_INNING_TABLE="""
+"""
+
+CREATE_AT_BAT_TABLE="""
+"""
+
+CREATE_PITCH_TABLE="""
+"""
+
+CREATE_RUNNER_TABLE="""
+"""
+
+CREATE_PICKOFF_TABLE="""
+"""
+
+CREATE_RUNNER_TABLE="""
+"""
+
+CREATE_PICKOFF_TABLE="""
+"""
+
+CREATE_ACTION_TABLE="""
+"""
+
+CREATE_GAME_PLAYER_TABLE="""
+"""
+
