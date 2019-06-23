@@ -1,10 +1,18 @@
 # Helper class to parse xml from Gameday xml into objects
 # Author: Javier Palomares
 
-from pypitchfx.gameday_model import *
+from pypitchfx.gameday_model.Action import Action
+from pypitchfx.gameday_model.AtBat import AtBat
+from pypitchfx.gameday_model.Game import Game 
+from pypitchfx.gameday_model.GamePlayer import GamePlayer 
+from pypitchfx.gameday_model.HalfInning import HalfInning 
+from pypitchfx.gameday_model.Inning import Inning 
+from pypitchfx.gameday_model.Pickoff import Pickoff 
+from pypitchfx.gameday_model.Pitch import Pitch
+from pypitchfx.gameday_model.Runner import Runner 
 from pypitchfx.load.load_players import load_player
 from pypitchfx.load.load_games import load_game
-from pypitchfx.utils.utils import get_gid_from_url
+from pypitchfx.utils.utils import get_gid_from_url,get_height_from_string
 from bs4 import BeautifulSoup
 import requests
 
@@ -290,30 +298,12 @@ def parse_player(player,gid):
     losses = player_attrs.get('losses')
     era = player_attrs.get('era')
     
-    p = gameday_model.GamePlayer()
+    p = GamePlayer(_id,first,last,num,boxname,
+    rl,bats,position,_status,team_abbrev,
+    team_id,parent_team_abbrev,parent_team_id,avg,
+    hr,rbi,current_position,bat_order,
+    game_position,wins,losses,era)
     p.gid = gid
-    p.id = _id
-    p.first = first
-    p.last = last
-    p.num = num
-    p.boxname = boxname
-    p.rl = rl
-    p.bats = bats
-    p.position = position
-    p.status = _status
-    p.team_abbrev = team_abbrev
-    p.team_id = team_id
-    p.parent_team_abbrev = parent_team_abbrev
-    p.parent_team_id = parent_team_id
-    p.avg = avg
-    p.hr = hr
-    p.rbi = rbi
-    p.current_position = current_position
-    p.bat_order = bat_order
-    p.game_position = game_position
-    p.wins = wins
-    p.losses = losses
-    p.era = era
     
     return p
 
