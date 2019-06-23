@@ -15,7 +15,7 @@ class Pitch:
         self.y = y
         self.event_num = event_num
         self.sv_id = sv_id
-        self.play_guid = play_guid # TODO: Generate this uid
+        self.play_guid = play_guid 
         self.start_speed = start_speed
         self.end_speed = end_speed
         self.sz_top = sz_top
@@ -44,5 +44,10 @@ class Pitch:
         self.spin_rate = spin_rate
         self.cc = cc
         self.mt = mt
+
+        self.at_bat_id = None
+        self.half_inning_id = None
+        self.inning_id = None
+        self.game_id = None
 
 

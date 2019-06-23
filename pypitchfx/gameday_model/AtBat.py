@@ -13,7 +13,7 @@ class AtBat:
         self.start_tfs_zulu = start_tfs_zulu
         self.batter = batter
         self.stand = stand
-        self.b_height = b_height #TODO: Convert to inches
+        self.b_height = b_height 
         self.pitcher = pitcher
         self.p_throws = p_throws
         self.des = des
@@ -24,3 +24,7 @@ class AtBat:
         self.away_team_runs = away_team_runs
         self.pitches = None
         self.runners = None
+
+        self.half_inning_id = None
+        self.inning_id = None
+        self.game_id = None

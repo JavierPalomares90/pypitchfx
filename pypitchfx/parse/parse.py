@@ -1,81 +1,20 @@
-import numpy as np
-import pandas as pd
-from bs4 import BeautifulSoup # required  pip3 install lxml
-import gids as gds
-import argparse
-from datetime import datetime
+# Helper class to parse xml from Gameday xml into objects
+# Author: Javier Palomares
+
+from pypitchfx.gameday_model.Action import Action
+from pypitchfx.gameday_model.AtBat import AtBat
+from pypitchfx.gameday_model.Game import Game 
+from pypitchfx.gameday_model.GamePlayer import GamePlayer 
+from pypitchfx.gameday_model.HalfInning import HalfInning 
+from pypitchfx.gameday_model.Inning import Inning 
+from pypitchfx.gameday_model.Pickoff import Pickoff 
+from pypitchfx.gameday_model.Pitch import Pitch
+from pypitchfx.gameday_model.Runner import Runner 
+from pypitchfx.load.load_players import load_player
+from pypitchfx.load.load_games import load_game
+from pypitchfx.utils.utils import get_gid_from_url,get_height_from_string
+from bs4 import BeautifulSoup
 import requests
-from Game import Game
-from Inning import Inning
-from AtBat import AtBat
-from HalfInning import HalfInning
-from Pitch import Pitch
-from Runner import Runner
-from Action import Action
-from Pickoff import Pickoff
-
-'''
-Python tool to scrape pitchf/x data from mlb's website.
-Inspired by pitchfx package written in R
-Author: Javier Palomares
-'''
-
-def gids2urls(gids):
-    urls = []
-    root = "http://gd2.mlb.com/components/game/mlb"
-    for gid in gids:
-       elements = gid.split('_') 
-       year = elements[1]
-       month = elements[2]
-       day = elements[3]
-       url = "{root}/year_{year}/month_{month}/day_{day}/{id}".format(root=root,year=year,month=month,day=day,id=gid)
-       urls.append(url)
-    return urls
-
-
-def makeUrls(start=None,end=None,gids=None):
-    if gids is None:
-        if start is None or end is None:
-            raise Exception("Need to specify start or end")
-        gids = gds.get_gids()
-        subset_gids = get_subset_gids(gids,start,end)
-        return gids2urls(subset_gids)
-        
-        
-def get_subset_gids(gids,first,last):
-    list = []
-    first_dt = datetime.strptime(first,"%Y-%m-%d")
-    last_dt = datetime.strptime(last,"%Y-%m-%d")
-    for gid in gids:
-        elements = gid.split('_')
-        gid_dt = datetime.strptime(elements[1]+"-"+elements[2]+"-"+elements[3],"%Y-%m-%d")
-        if(first_dt <= gid_dt and gid_dt <= last_dt):
-            list.append(gid)
-    return list
-
-def get_innings_all(game_dir):
-    innings_all = []
-    for game in game_dir:
-        innings_all.append(game+"/inning/inning_all.xml")
-    return innings_all
-
-def get_players(game_dir):
-    players = []
-    for game in game_dir:
-        players.append(game + "/players.xml")
-    return players
-
-def get_innings_hit(game_dir):
-    innings_hit = []
-    for game in game_dir:
-        innings_hit.append(game + "/inning/inning_hit.xml")
-    return innings_hit
-
-def get_miniscoreboard(game_dir):
-    miniscoreboard = []
-    for game in game_dir:
-        miniscoreboard.append(game + "/miniscoreboard.xml")
-    return miniscoreboard
 
 def parse_game(game_xml):
     game_attrs = dict(game_xml.attrs)
@@ -86,7 +25,26 @@ def parse_game(game_xml):
     game = Game(atBat,deck,hole,ind)
     return game
 
-def parse_pitch(pitch_xml):
+def parse_top_bottom_half_innings(half_innings,game_id,inning_id):
+    top = half_innings[0]
+    top_inning = parse_half_inning(top,True,game_id,inning_id)
+    bottom_inning = None
+    if(len(half_innings) > 1):
+        bottom = half_innings[1]
+        bottom_inning = parse_half_inning(bottom,False,game_id,inning_id)
+    return top_inning,bottom_inning
+
+def parse_scoreboard_xml(scoreboard_xml):
+    game_ids = []
+    go_games = scoreboard_xml.find_all('go_game')
+    for game in go_games:
+        game_xml = game.find_all('game')[0]
+        attrs = dict(game_xml.attrs)
+        game_id = attrs['id']
+        game_ids.append(game_id)
+    return game_ids
+
+def parse_pitch(pitch_xml,game_id,inning_id,half_inning_id,at_bat_id):
     pitch_attrs = dict(pitch_xml.attrs)
     des = pitch_attrs.get('des')
     id_var = pitch_attrs.get('id')
@@ -131,9 +89,14 @@ def parse_pitch(pitch_xml):
     play_guid,start_speed,end_speed,sz_top,sz_bot,pfx_x,pfx_z,
     px,pz,x0,y0,z0,vx0,vy0,vz0,ax,ay,az,break_y,break_angle,break_length,
     pitch_type,type_conf,zone,nasty,spin_dir,spin_rate,cc,mt)
+
+    pitch.game_id = game_id
+    pitch.inning_id = inning_id
+    pitch.half_inning_id = half_inning_id
+    pitch.at_bat_id = at_bat_id
     return pitch
 
-def parse_runner(r):
+def parse_runner(r,game_id,inning_id,half_inning_id,at_bat_id):
     runner_attributes = dict(r.attrs)
     id_var = runner_attributes['id']
     start = runner_attributes['start']
@@ -145,24 +108,24 @@ def parse_runner(r):
     rbi = runner_attributes.get('rbi','F')
     earned = runner_attributes.get('earned','F')
     runner = Runner(id_var,start,end,event,event_num,score,rbi,earned)
+    runner.game_id = game_id
+    runner.inning_id = inning_id
+    runner.half_inning_id = half_inning_id
+    runner.at_bat_id = at_bat_id
     return runner
 
-def parse_pickoff(po):
+def parse_pickoff(po,game_id,inning_id,half_inning_id,at_bat_id):
     po_attributes = dict(po.attrs)
     des = po_attributes['des']
     event_num = po_attributes['event_num']
     pickoff = Pickoff(des,event_num)
+    pickoff.game_id = game_id
+    pickoff.inning_id = inning_id
+    pickoff.half_inning_id = half_inning_id
+    pickoff.at_bat_id = at_bat_id
     return pickoff
 
-def get_height_from_string(s):
-    height = 0
-    h = s.split('-')
-    feet = int(h[0])
-    inches = int(h[1])
-    height = 12 * feet + inches
-    return height
-
-def parse_at_bat(ab):
+def parse_at_bat(ab,game_id,inning_id,half_inning_id):
     ab_attributes = dict(ab.attrs)
     num = ab_attributes['num']
     b = ab_attributes['b']
@@ -195,19 +158,25 @@ def parse_at_bat(ab):
 
     at_bat = AtBat(num,b,s,o,start_tfs,start_tfs_zulu,batter,
         stand,b_height,pitcher,p_throws,des,event_num,event,home_team_runs,away_team_runs,score)
+
+    at_bat.game_id=game_id
+    at_bat.inning_id=inning_id
+    at_bat.half_inning_id=half_inning_id
+    at_bat_id = str(at_bat.uuid)
+
     # get the pitches and runners during the atbat
     pitches_runners_xml = list(ab.children)
     pitches = []
     runners = []
     for x in pitches_runners_xml:
         if x.name == 'pitch':
-            pitch = parse_pitch(x)
+            pitch = parse_pitch(x,game_id,inning_id,half_inning_id,at_bat_id)
             pitches.append(pitch)
         elif x.name == 'runner':
-            runner = parse_runner(x)
+            runner = parse_runner(x,game_id,inning_id,half_inning_id,at_bat_id)
             runners.append(runner)
         elif x.name == 'po':
-            pickoff = parse_pickoff(x)
+            pickoff = parse_pickoff(x,game_id,inning_id,half_inning_id,at_bat_id)
             # Add the pickoff to the list of pitches
             pitches.append(pickoff)
         else:
@@ -217,7 +186,7 @@ def parse_at_bat(ab):
 
     return at_bat
 
-def parse_action(x):
+def parse_action(x,game_id,inning_id,half_inning_id):
     action_attributes = dict(x.attrs)
     b = action_attributes['b']
     s = action_attributes['s']
@@ -232,35 +201,33 @@ def parse_action(x):
     home_team_runs = action_attributes['home_team_runs']
     away_team_runs = action_attributes['away_team_runs']
     action = Action(b,s,o,des,event,tfs,tfs_zulu,player,pitch,event_num,home_team_runs,away_team_runs)
+    action.game_id = game_id
+    action.inning_id = inning_id
+    action.half_inning_id = half_inning_id
     return action
 
-def parse_half_inning(half):
+def parse_half_inning(half, isTop,game_id,inning_id):
     abs_and_actions_xml = list(half.children)
     at_bats_and_actions = []
+    h = HalfInning()
+    half_inning_id = str(h.uuid)
+    h.game_id = game_id
+    h.inning_id = inning_id
     for x in abs_and_actions_xml:
         if x.name == 'atbat':
-            at_bat = parse_at_bat(x)
+            at_bat = parse_at_bat(x,game_id,inning_id,half_inning_id)
             at_bats_and_actions.append(at_bat)
         elif x.name =='action':
-            action = parse_action(x)
+            action = parse_action(x,game_id,inning_id,half_inning_id)
             at_bats_and_actions.append(action)
         else:
             raise('Invalid xml child' + x)
-    h = HalfInning()
     h.at_bats_and_actions = at_bats_and_actions
+    # whether the inning is top or bottom half inning
+    h.isTop = isTop
     return h
 
-def add_half_innings(inning,half_innings):
-    top = half_innings[0]
-    top_inning = parse_half_inning(top)
-    inning.top = top_inning
-    if(len(half_innings) > 1):
-        bottom = half_innings[1]
-        bottom_inning = parse_half_inning(bottom)
-        inning.bottom = bottom_inning
-    return inning
-
-def parse_inning(inning):
+def parse_inning(inning,game_id):
     innings_attr = dict(inning.attrs)
     num = innings_attr["num"]
     away_team = innings_attr["away_team"]
@@ -269,55 +236,97 @@ def parse_inning(inning):
     nxt = innings_attr["next"]
     half_innings = list(inning.children)
     i = Inning(num,away_team,home_team,nxt)
-    i = add_half_innings(i,half_innings)
+    inning_id = str(i.uuid)
+    i.game_id = game_id
+    top,bottom = parse_top_bottom_half_innings(half_innings,game_id,inning_id)
+    i.top = top
+    i.bottom = bottom
     return i
 
 
-def parse_innnings_all(innings_all):
+# Parse the url to the /inning/inning_all.xml url
+# Load the games using the  db_connection if passed in
+def parse_innings_all(innings_all,db_connection=None):
     games = []
     for url in innings_all:
+        gid = get_gid_from_url(url)
         try:
             resp = requests.get(url)
             contents = resp.content
             soup = BeautifulSoup(contents,'xml')
             game_xml = soup.find('game')
             game = parse_game(game_xml)
+            game_id = str(game.uuid)
             innings_xml = soup.find_all('inning')
             innings = []
-            for inni in innings_xml:
-                innings.append(parse_inning(inni))
+            for inning_xml in innings_xml:
+                inning = parse_inning(inning_xml,game_id)
+                innings.append(inning)
             game.innings = innings
             game.url = url
-        except:
+            game.gid = gid
+            if db_connection is not None:
+                load_game(game,db_connection)
+            games.append(game)
+        except Exception as e:
             print('unable to load game {}'.format(url))
+            print(e)
     return games
-        
 
-def scrape(start,end,game_ids=None,suffix="inning/inning_all.xml",db_connection=None):
-    if game_ids is None:
-        game_dir = makeUrls(start,end)
-    else:
-        game_dir = makeUrls(gids=game_ids)
-    for url in game_dir:
-        print(url)
-    innings_all = get_innings_all(game_dir)
-    players = get_players(game_dir)
-    innings_hit = get_innings_hit(game_dir)
-    mini_scoreboard = get_miniscoreboard(game_dir)
-    games = parse_innnings_all(innings_all)
+def parse_player(player,gid):
+    player_attrs = dict(player.attrs)
+    _id = player_attrs.get('id')
+    first = player_attrs.get('first')
+    last = player_attrs.get('last')
+    num = player_attrs.get('num')
+    boxname = player_attrs.get('boxname')
+    rl = player_attrs.get('rl')
+    bats = player_attrs.get('bats')
+    position = player_attrs.get('position')
+    _status = player_attrs.get('status')
+    team_abbrev = player_attrs.get('team_abbrev')
+    team_id = player_attrs.get('team_id')
+    parent_team_abbrev = player_attrs.get('parent_team_abbrev')
+    parent_team_id = player_attrs.get('parent_team_id')
+    avg = player_attrs.get('avg')
+    hr = player_attrs.get('hr')
+    rbi = player_attrs.get('rbi')
+    current_position = player_attrs.get('current_position')
+    bat_order = player_attrs.get('bat_order')
+    game_position = player_attrs.get('game_position')
+    wins = player_attrs.get('wins')
+    losses = player_attrs.get('losses')
+    era = player_attrs.get('era')
     
-def get_args():
-    parser = argparse.ArgumentParser(description='Scrape data')
-    parser.add_argument('-s','--start')
-    parser.add_argument('-e','--end')
-    args = parser.parse_args()
-    return args
+    p = GamePlayer(_id,first,last,num,boxname,
+    rl,bats,position,_status,team_abbrev,
+    team_id,parent_team_abbrev,parent_team_id,avg,
+    hr,rbi,current_position,bat_order,
+    game_position,wins,losses,era)
+    p.gid = gid
+    
+    return p
 
-def main():
-    args = get_args()
-    start = args.start
-    end = args.end
-    scrape(start,end)
 
-if __name__=="__main__":
-    main()
+
+# Parse the url to the /players.xml url
+# Load the player using the db_connection if passed in
+def parse_players(players_urls,db_connection=None):
+    players = []
+    for url in players_urls:
+        try:
+            gid = get_gid_from_url(url)
+            resp = requests.get(url)
+            contents = resp.content
+            soup = BeautifulSoup(contents,'xml')
+            players_xml = soup.find_all('player')
+            players = []
+            for player_xml in players_xml:
+                p = parse_player(player_xml,gid)
+                if db_connection is not None:
+                    load_player(p,db_connection)
+                players.append(p)
+        except Exception as e:
+            print('unable to load player {}'.format(url))
+            print(e)
+    return players 

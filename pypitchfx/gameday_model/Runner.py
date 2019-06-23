@@ -11,3 +11,8 @@ class Runner:
         self.score = score
         self.rbi = rbi
         self.earned = earned
+
+        self.at_bat_id = None
+        self.half_inning_id = None
+        self.inning_id = None
+        self.game_id = None
