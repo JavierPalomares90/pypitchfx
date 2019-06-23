@@ -27,6 +27,8 @@ def insert_player(conn,player):
     losses = player.losses
     era = player.era
     gid = player.gid
+    bat_order = player.bat_order
+    game_position = player.game_position
 
     # Escape names with single quote (like O'Connor)
     first = first.replace("'","''")
@@ -47,11 +49,14 @@ def insert_player(conn,player):
         parent_team_abbrev=parent_team_abbrev,
         parent_team_id=parent_team_id,
         avg=avg,
+        hr = hr,
         rbi=rbi,
         current_position=current_position,
+        bat_order=bat_order,
         wins=wins,
         losses=losses,
         era=era,
+        game_position=game_position,
         gid=gid)
         .replace("'None'",'None').replace('None','NULL'))
     conn.execute(sql)

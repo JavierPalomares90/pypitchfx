@@ -64,6 +64,7 @@ INSERT INTO half_inning(
 VALUES(
     '{half_inning_id}',
     ARRAY{at_bats_actions_id}::VARCHAR(36)[],
+    {isTop},
     '{game_id}',
     '{inning_id}'
 );"""
