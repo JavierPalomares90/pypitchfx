@@ -111,8 +111,12 @@ def get_height_from_string(s):
     return height
 
 def  get_gid_from_url(url):
-    #TODO: Finish impl
-    pass
+    # find the gid from the url
+    x = re.search('gid_[0-9]{4}_[0-9]{2}_[0-9]{2}_.*\/',url)
+    gid = x.group()
+    # remove the backslash
+    gid = gid.replace('/','')
+    return gid
 
 def get_ids(pojos):
     ids = []
@@ -152,7 +156,6 @@ def zulu_to_ts(start):
     return start
 
 def runner_base_to_int(pos):
-    #TODO: Test
     if pos == "":
         return 0
     elif pos == '1B':

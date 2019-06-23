@@ -13,7 +13,7 @@ class AtBat:
         self.start_tfs_zulu = start_tfs_zulu
         self.batter = batter
         self.stand = stand
-        self.b_height = b_height #TODO: Convert to inches
+        self.b_height = b_height 
         self.pitcher = pitcher
         self.p_throws = p_throws
         self.des = des
