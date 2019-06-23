@@ -18,6 +18,16 @@ def parse_game(game_xml):
     game = Game(atBat,deck,hole,ind)
     return game
 
+def add_half_innings(inning,half_innings):
+    top = half_innings[0]
+    top_inning = parse_half_inning(top)
+    inning.top = top_inning
+    if(len(half_innings) > 1):
+        bottom = half_innings[1]
+        bottom_inning = parse_half_inning(bottom)
+        inning.bottom = bottom_inning
+    return inning
+
 def parse_scoreboard_xml(scoreboard_xml):
     game_ids = []
     go_games = scoreboard_xml.find_all('go_game')

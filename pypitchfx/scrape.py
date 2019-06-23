@@ -13,16 +13,6 @@ Inspired by pitchfx package written in R
 Author: Javier Palomares
 '''
 
-def add_half_innings(inning,half_innings):
-    top = half_innings[0]
-    top_inning = parse_half_inning(top)
-    inning.top = top_inning
-    if(len(half_innings) > 1):
-        bottom = half_innings[1]
-        bottom_inning = parse_half_inning(bottom)
-        inning.bottom = bottom_inning
-    return inning
-
 # Return the games and players for the given date range or list of ids
 # Pass in a db_connection to write the games and players to a relational DB
 def scrape_games_players(start=None,end=None,game_ids=None,db_connection=None):
