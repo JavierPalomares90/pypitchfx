@@ -1,8 +1,3 @@
-import numpy as np
-import pandas as pd
-from bs4 import BeautifulSoup # required  pip3 install lxml
-from datetime import datetime
-import requests
 from pypitchfx.gameday_model import *
 from pypitchfx.parse.parse import *
 from pypitchfx.utils.utils import *
