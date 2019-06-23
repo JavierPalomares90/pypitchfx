@@ -185,6 +185,7 @@ INSERT_PITCH="""INSERT INTO pitch(
     az,
     break_y,
     break_angle,
+    break_length,
     pitch_type,
     type_confidence,
     zone,
@@ -228,6 +229,7 @@ VALUES(
     {az},
     {break_y},
     {break_angle},
+    {break_length},
     '{pitch_type}',
     {type_confidence},
     {zone},
@@ -238,7 +240,7 @@ VALUES(
     '{mt}',
     '{game_id}',
     '{inning_id}',
-    '{half_inning_id}'
+    '{half_inning_id}',
     '{at_bat_id}',
     {outcome}
 );"""
