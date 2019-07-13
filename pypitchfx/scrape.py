@@ -40,9 +40,12 @@ def scrape_games_players(start=None,end=None,batch_size=20,game_ids=None,engine=
     index = 0
     games = []
     players = []
-    while index < num_to_load:
+    while True:
         start_index = index*batch_size
         end_index = min((index+1)*batch_size,num_to_load)
+        if (start_index >= num_to_load):
+            break
+        index = index + 1
         innings_to_load = innings_all_urls[start_index:end_index]
         players_to_load = players_urls[start_index:end_index]
         games.append(parse_innings_all(innings_to_load,db_connection))

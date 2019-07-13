@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='pypitchfx',
-      version='0.9',
+      version='1.0',
       description='Tool for parsing mlb gameday data',
       url='http://github.com/JavierPalomares90/pypitchfx',
       author='Javier Palomares',
