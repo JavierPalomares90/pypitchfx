@@ -34,6 +34,10 @@ def insert_player(conn,player):
     first = first.replace("'","''")
     last = last.replace("'","''")
     boxname = boxname.replace("'","''")
+    # some players have '-' to indicate NULL era
+    if era == '-':
+        era = None
+        
     sql = text(INSERT_GAMEPLAYER.format(
         id=player_id,
         first=first,
