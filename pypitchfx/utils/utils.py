@@ -99,6 +99,7 @@ def get_args():
     parser.add_argument('-s','--start')
     parser.add_argument('-e','--end')
     parser.add_argument('-g','--gameId',required=False,nargs='+')
+    parser.add_argument('-b','--batchSize',required=False,default=20)
     args = parser.parse_args()
     return args
 

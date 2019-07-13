@@ -19,7 +19,7 @@ Author: Javier Palomares
 
 # Return the games and players for the given date range or list of ids
 # Pass in a SqlAlchemy engine to write the games and players to a relational DB
-def scrape_games_players(start=None,end=None,game_ids=None,engine=None):
+def scrape_games_players(start=None,end=None,batch_size=20,game_ids=None,engine=None):
     if game_ids is None:
         if start is None or end is None:
             raise Exception('Specify the start and end dates, or give the game ids')
@@ -35,8 +35,18 @@ def scrape_games_players(start=None,end=None,game_ids=None,engine=None):
 
     innings_all_urls = get_innings_all_urls(game_urls)
     players_urls = get_players_urls(game_urls)
-    games = parse_innings_all(innings_all_urls,db_connection)
-    players = parse_players(players_urls,db_connection)
+    # upload the player and game data in batches
+    num_to_load = len(innings_all_urls)
+    index = 0
+    games = []
+    players = []
+    while index < num_to_load:
+        start_index = index*batch_size
+        end_index = min((index+1)*batch_size,num_to_load)
+        innings_to_load = innings_all_urls[start_index:end_index]
+        players_to_load = players_urls[start_index:end_index]
+        games.append(parse_innings_all(innings_to_load,db_connection))
+        players.append(parse_players(players_to_load,db_connection))
 
     if db_connection is not None:
         db_connection.close()
@@ -48,7 +58,8 @@ def main():
     start = args.start
     end = args.end
     gids = args.gameId
-    games,players = scrape_games_players(start,end,game_ids=gids)
+    batch_size = args.batchSize
+    games,players = scrape_games_players(start,end,batchSize,game_ids=gids)
 
 if __name__=="__main__":
     main()
