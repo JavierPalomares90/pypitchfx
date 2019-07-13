@@ -8,4 +8,8 @@ setup(name='pypitchfx',
       author_email='javier.palomares.90@gmail.com',
       license='MIT',
       packages=['pypitchfx'],
+      install_requires=[
+          'beautifulsoup4',
+          'lxml'
+      ],
       zip_safe=False)
