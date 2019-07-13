@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='pypitchfx',
-      version='0.8',
+      version='0.9',
       description='Tool for parsing mlb gameday data',
       url='http://github.com/JavierPalomares90/pypitchfx',
       author='Javier Palomares',
@@ -10,6 +10,7 @@ setup(name='pypitchfx',
       packages=['pypitchfx'],
       install_requires=[
           'beautifulsoup4',
-          'lxml'
+          'lxml',
+	  'sqlalchemy'
       ],
       zip_safe=False)
