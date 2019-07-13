@@ -279,7 +279,7 @@ def parse_player(player,gid):
     _id = player_attrs.get('id')
     first = player_attrs.get('first')
     last = player_attrs.get('last')
-    num = player_attrs.get('num')
+    num = player_attrs.get('num',0)
     boxname = player_attrs.get('boxname')
     rl = player_attrs.get('rl')
     bats = player_attrs.get('bats')
