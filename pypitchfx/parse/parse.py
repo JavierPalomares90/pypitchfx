@@ -15,6 +15,8 @@ from pypitchfx.load.load_games import load_game
 from pypitchfx.utils.utils import get_gid_from_url,get_height_from_string
 from bs4 import BeautifulSoup
 import requests
+import logging
+logger = logging.getLogger("pypitchfx")
 
 def parse_game(game_xml):
     game_attrs = dict(game_xml.attrs)
@@ -251,6 +253,7 @@ def parse_innings_all(innings_all,db_connection=None):
     games = []
     for url in innings_all:
         gid = get_gid_from_url(url)
+        logger.debug("parsing game xml {}".format(gid))
         try:
             resp = requests.get(url)
             contents = resp.content
@@ -270,8 +273,7 @@ def parse_innings_all(innings_all,db_connection=None):
                 load_game(game,db_connection)
             games.append(game)
         except Exception as e:
-            print('unable to load game {}'.format(url))
-            print(e)
+            logger.exception('unable to load game {}'.format(url))
     return games
 
 def parse_player(player,gid):
@@ -315,6 +317,7 @@ def parse_player(player,gid):
 def parse_players(players_urls,db_connection=None):
     players = []
     for url in players_urls:
+        logger.debug("parsing player xml {}".format(url))
         try:
             gid = get_gid_from_url(url)
             resp = requests.get(url)
@@ -328,6 +331,5 @@ def parse_players(players_urls,db_connection=None):
                     load_player(p,db_connection)
                 players.append(p)
         except Exception as e:
-            print('unable to load player {}'.format(url))
-            print(e)
+            logger.exception('unable to load player {}'.format(url))
     return players 
