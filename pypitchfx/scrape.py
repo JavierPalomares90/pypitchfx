@@ -35,6 +35,7 @@ def scrape_games_players(start=None,end=None,batch_size=20,game_ids=None,engine=
 
     innings_all_urls = get_innings_all_urls(game_urls)
     players_urls = get_players_urls(game_urls)
+    assert(len(innings_all_urls) == len(players_urls))
     # upload the player and game data in batches
     num_to_load = len(innings_all_urls)
     index = 0
