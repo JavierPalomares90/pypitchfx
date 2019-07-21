@@ -28,5 +28,6 @@ class GamePlayer:
         self.losses = losses
         self.era = era
         self.gid = None
+        self.url = None
 
 

@@ -10,9 +10,12 @@ from pypitchfx.gameday_model.Pitch import Pitch
 from pypitchfx.gameday_model.Runner import Runner 
 from pypitchfx.utils.utils import *
 from sqlalchemy.sql import text
+import logging
+logger = logging.getLogger("pypitchfx")
+
 
 def insert_game(conn,game):
-    print('Inserting {}\n'.format(game.url))
+    logger.info('Inserting {}\n'.format(game.url))
     game_id = game.uuid
     at_bat = game.atBat
     deck = game.deck

@@ -327,6 +327,7 @@ def parse_players(players_urls,db_connection=None):
             players = []
             for player_xml in players_xml:
                 p = parse_player(player_xml,gid)
+                p.url = url
                 if db_connection is not None:
                     load_player(p,db_connection)
                 players.append(p)
