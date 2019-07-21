@@ -34,6 +34,8 @@ def insert_player(conn,player):
     first = first.replace("'","''")
     last = last.replace("'","''")
     boxname = boxname.replace("'","''")
+    if not num:
+        num = 0
     # some players have '-' to indicate NULL era
     if era is not None and '-' in era:
         era = None
