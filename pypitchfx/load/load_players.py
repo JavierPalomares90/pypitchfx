@@ -4,7 +4,7 @@ from pypitchfx.utils.utils import *
 from sqlalchemy.sql import text
 
 def insert_player(conn,player):
-    logger.info('Inserting {}\n'.format(player.url)
+    logger.info('Inserting {}\n'.format(player.url))
     player_id = player.id
     first = player.first
     last = player.last
