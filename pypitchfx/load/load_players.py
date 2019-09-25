@@ -3,6 +3,9 @@ from pypitchfx.gameday_model import GamePlayer
 from pypitchfx.utils.utils import *
 from sqlalchemy.sql import text
 
+import logging
+logger = logging.getLogger("pypitchfx")
+
 def insert_player(conn,player):
     logger.info('Inserting {}\n'.format(player.url))
     player_id = player.id
