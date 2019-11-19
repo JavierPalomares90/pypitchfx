@@ -169,6 +169,8 @@ def parse_at_bat(ab,game_id,inning_id,half_inning_id):
 
     # get the pitches and runners during the atbat
     pitches_runners_xml = list(ab.children)
+    # remove any new line children
+    pitches_runners_xml = list(filter(('\n').__ne__,pitches_runners_xml))
     pitches = []
     runners = []
     for x in pitches_runners_xml:
@@ -211,6 +213,7 @@ def parse_action(x,game_id,inning_id,half_inning_id):
 
 def parse_half_inning(half, isTop,game_id,inning_id):
     abs_and_actions_xml = list(half.children)
+    abs_and_actions_xml = list(filter(('\n').__ne__, abs_and_actions_xml))
     at_bats_and_actions = []
     h = HalfInning()
     half_inning_id = str(h.uuid)
@@ -238,6 +241,8 @@ def parse_inning(inning,game_id):
     
     nxt = innings_attr["next"]
     half_innings = list(inning.children)
+    # Remove any new line children
+    half_innings = list(filter(('\n').__ne__, half_innings))
     i = Inning(num,away_team,home_team,nxt)
     inning_id = str(i.uuid)
     i.game_id = game_id
@@ -273,7 +278,7 @@ def parse_innings_all(innings_all,db_connection=None):
                 load_game(game,db_connection)
             games.append(game)
         except Exception as e:
-            logger.exception('unable to load game {}'.format(url))
+            logger.exception('unable to load game {}'.format(url),e)
     return games
 
 def parse_player(player,gid):
