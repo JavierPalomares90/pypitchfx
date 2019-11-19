@@ -7,7 +7,7 @@ setup(name='pypitchfx',
       author='Javier Palomares',
       author_email='javier.palomares.90@gmail.com',
       license='MIT',
-      packages=['pypitchfx','pypitchfx.gameday_model','pypitchfx.load'],
+      packages=['pypitchfx','pypitchfx.gameday_model','pypitchfx.load','pypitchfx.parse','pypitchfx.utils'],
       install_requires=[
           'beautifulsoup4',
           'lxml',
