@@ -250,7 +250,7 @@ def insert_at_bat(conn,ab):
         at_bat_id=ab_id,
         num=num,b=b,
         s=s,
-        o=0,
+        o=o,
         start_tfs_zulu=start,
         batter=batter,
         b_height=b_height,
