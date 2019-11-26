@@ -164,7 +164,9 @@ def runner_base_to_int(pos):
         return 2
     elif pos == '3B':
         return 3
+    elif pos == 'score':
+        return 4
     else:
-        raise("invalid runner base" + pos)
+        raise Exception("Invalid runner base " + pos)
 
 
