@@ -115,6 +115,8 @@ def insert_pitch(conn,pitch):
     type_confidence = pitch.type_confidence
     zone = pitch.zone
     nasty = pitch.nasty
+    if nasty == '':
+        nasty = None
     spin_dir = pitch.spin_dir
     spin_rate = pitch.spin_rate
     cc = ''
@@ -164,9 +166,8 @@ def insert_pitch(conn,pitch):
         half_inning_id = hf_id,
         at_bat_id = ab_id,
         outcome = outcome
-    ).replace("'None'",'None').replace('None','NULL'))
+    ).replace("'None'",'None').replace('None','NULL').replace('placeholder','NULL'))
     conn.execute(sql)
-
 
 def insert_runner(conn,runner):
     runner_id = str(runner.uuid)
