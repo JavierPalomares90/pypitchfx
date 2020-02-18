@@ -11,6 +11,7 @@ setup(name='pypitchfx',
       install_requires=[
           'beautifulsoup4',
           'lxml',
-	  'sqlalchemy'
+          'sqlalchemy',
+          'requests'
       ],
       zip_safe=False)
