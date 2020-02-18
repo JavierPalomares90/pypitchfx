@@ -27,6 +27,9 @@ Additionally, the tool generates unique identifiers at parse time to guarantee u
 
 ![E-R Diagram](https://github.com/JavierPalomares90/pypitchfx/blob/master/images/gameday_er_diagram.png "E-R Diagram")
 
+ Entity-Relationship diagram of the database model the `pypitchfx` tool writesthe  Gameday  data  to.   All  of  the  data  fields  available  in  the  xml  fields  are  mapped  tocolumns of the same name.  Generated UUIDs are the tables’ primary keys.  Foreign keyconstraints enforce parent child relationships.  Entities maintain list of the parent to allow for fast lookups of the parent entity.  The DDL statements used to insert and create thetables are available in the pypitch repository in `Queries.py`. Batter and Pitcher are materi-alized views to used to distinguish pitchers and batters in the `Game_Player` table.
+
+
 ## Getting data objects for a given data range
 Pass in a range of date (start and end inclusive) for the games you're looking for. The tool will automatically look for all games played in the given range.
 
