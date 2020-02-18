@@ -20,15 +20,23 @@ The  data  available  at  MLB’s  Gameday  portal  is  formatted  into  xml  fi
 
 The tool parses each of the xml elements into python objects for easier data manipulation.
 
+![Element Hiearchy](https://github.com/JavierPalomares90/pypitchfx/blob/master/images/Element_Hierarchy.png "Hierarchy of Elements")
+
+
 Additionally, the tool generates unique identifiers at parse time to guarantee uniqueness and to relate parent and child elements.
 
+![E-R Diagram](https://github.com/JavierPalomares90/pypitchfx/blob/master/images/gameday_er_diagram.png "E-R Diagram")
+
 ## Getting data objects for a given data range
+Pass in a range of date (start and end inclusive) for the games you're looking for. The tool will automatically look for all games played in the given range.
+
 ```
 from pypitchfx.scrape import scrape_games_players
 games,players=scrape_games_players(start='2013-06-01',end='2013-06-01')
 ```
 ## Writing to a database
-Pass in a sqlalchemy engine and the script will write to a relational database
+Pass in a sqlalchemy engine and the script will write to a relational database following the ER diagram shown above.
+
 For example:
 ```
 from sqlalchemy import create_engine
